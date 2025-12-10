@@ -13,6 +13,11 @@ import ComposableArchitecture
 struct HomeReducer {
   @Dependency(\.homeAPIClient) var homeAPIClient
   @Dependency(\.dateFormatterCache) var dateFormatterCache
+  @Dependency(\.missionTimerClient) var missionTimerClient
+  
+  private enum CancelID {
+    case timer
+  }
 
   @ObservableState
   struct State: Equatable {
@@ -38,6 +43,7 @@ struct HomeReducer {
     var isFirstLaunchOfToday: Bool
     var todaySavedMoney: String?
     var toastMessage = ""
+    var remainingSeconds: Int = 0
 
     var bottomContentMargin: CGFloat {
       homeInfo.isTodayMissionDone ? 10 : 82
@@ -67,6 +73,9 @@ struct HomeReducer {
 
     case presentToast(String)
     case setToastPresented(Bool)
+    
+    case startTimer
+    case timerTicked(Int)
 
     // Internal Actions
     case fetchHomeData
@@ -106,7 +115,22 @@ struct HomeReducer {
           state.viewState = .home
         }
 
-        return .send(.fetchHomeData)
+        return .merge(
+          .send(.fetchHomeData),
+          .send(.startTimer)
+        )
+      
+      case .startTimer:
+        return .run { send in
+          for await remaining in missionTimerClient.timerStream() {
+            await send(.timerTicked(remaining))
+          }
+        }
+        .cancellable(id: CancelID.timer, cancelInFlight: true)
+      
+      case .timerTicked(let seconds):
+        state.remainingSeconds = seconds
+        return .none
 
       case .presentBottomSheet(let isVisible):
         state.presentBottomSheet = isVisible

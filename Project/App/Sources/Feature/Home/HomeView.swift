@@ -61,6 +61,8 @@ struct HomeView: View {
 
         ImageResource.fortuneCardShadow.image
           .padding(.bottom, 12)
+        
+        TodayMissionView(remainingSeconds: store.remainingSeconds)
 
         MissionListView(
           store: store.scope(
