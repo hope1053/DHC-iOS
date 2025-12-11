@@ -17,6 +17,7 @@ struct MainTabReducer {
   struct State: Equatable {
     var homeTab: HomeReducer.State?
     var reportTab = ReportReducer.State(reportInfo: .sample, spendChart: nil)
+    var rewardTab = RewardReducer.State()
     var myPageTab = MyPageReducer.State(myPageInfo: .sample)
     var selectedTab = TabKind.home
     
@@ -30,6 +31,7 @@ struct MainTabReducer {
     
     case homeTab(HomeReducer.Action)
     case reportTab(ReportReducer.Action)
+    case rewardTab(RewardReducer.Action)
     case myPageTab(MyPageReducer.Action)
     case selectedTabChanged(TabKind)
   }
@@ -37,6 +39,9 @@ struct MainTabReducer {
   var body: some ReducerOf<Self> {
     Scope(state: \.reportTab, action: \.reportTab) {
       ReportReducer()
+    }
+    Scope(state: \.rewardTab, action: \.rewardTab) {
+      RewardReducer()
     }
     Scope(state: \.myPageTab, action: \.myPageTab) {
       MyPageReducer()
@@ -58,6 +63,8 @@ struct MainTabReducer {
           return .none
         }
       case .reportTab:
+        return .none
+      case .rewardTab:
         return .none
       case .myPageTab:
         return .none

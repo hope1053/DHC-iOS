@@ -45,6 +45,21 @@ struct MainTabView: View {
           .renderingMode(.template)
         Text(TabKind.report.title)
       }
+      
+      Tab(value: .reward) {
+        NavigationStack {
+          RewardView(
+            store: store.scope(
+              state: \.rewardTab,
+              action: \.rewardTab
+            )
+          )
+        }
+      } label: {
+        Image(.Icon.reward)
+          .renderingMode(.template)
+        Text(TabKind.reward.title)
+      }
 
       Tab(value: .myPage) {
         NavigationStack {
