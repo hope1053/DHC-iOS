@@ -44,6 +44,9 @@ struct HomeReducer {
     var todaySavedMoney: String?
     var toastMessage = ""
     var remainingSeconds: Int = 0
+    var completedMissionCount: Int {
+      missionList.todayDailyMissionList.filter { $0.isFinished }.count + (missionList.longTermMission.isFinished ? 1 : 0)
+    }
 
     var bottomContentMargin: CGFloat {
       homeInfo.isTodayMissionDone ? 10 : 82
@@ -67,6 +70,7 @@ struct HomeReducer {
     case presentBottomSheet(Bool)
     case confirmTodayMissionDoneButtonTapped
     case cancelTodayMissionDoneButtonTapped
+    case rewardButtonTapped
 
     case popupConfirmButtonTapped
     case popupDismissButtonTapped
@@ -172,6 +176,10 @@ struct HomeReducer {
 
       case .cancelTodayMissionDoneButtonTapped:
         state.presentBottomSheet = false
+        return .none
+        
+      case .rewardButtonTapped:
+        // TODO
         return .none
 
       case .popupConfirmButtonTapped:
