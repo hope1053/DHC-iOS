@@ -13,10 +13,10 @@ struct DHCBadge: View {
   let isActive: Bool
 
   var body: some View {
-    Badge(
-      badgeTitle: badgeTitle,
-      textStyle: badgeStyle.textStyle,
+    BadgeView(
+      text: badgeTitle,
       textColor: isActive ? badgeStyle.textColor : ColorResource.Neutral._300.color,
+      font: badgeStyle.textStyle,
       backgroundColor: isActive ? badgeStyle.backgroundColor : ColorResource.Neutral._500.color
     )
   }

@@ -8,11 +8,37 @@
 import SwiftUI
 
 struct TodayMissionView: View {
-  let remainingSeconds: Int
+  private let remainingSeconds: Int
+  private let completedMissionCount: Int
+  private let didTapRewardButton: () -> Void
+  private let showCollectedRewardButtonTapped: () -> Void
+  private let getRewardButtonTapped: () -> Void
+  
+  init(
+    remainingSeconds: Int,
+    completedMissionCount: Int,
+    didTapRewardButton: @escaping () -> Void,
+    showCollectedRewardButtonTapped: @escaping () -> Void,
+    getRewardButtonTapped: @escaping () -> Void
+  ) {
+    self.remainingSeconds = remainingSeconds
+    self.completedMissionCount = completedMissionCount
+    self.didTapRewardButton = didTapRewardButton
+    self.showCollectedRewardButtonTapped = showCollectedRewardButtonTapped
+    self.getRewardButtonTapped = getRewardButtonTapped
+  }
   
   var body: some View {
     VStack(spacing: 24) {
       TodayMissionTimerView(remainingSeconds: remainingSeconds)
+      
+      MissionProgressView(
+        completedMissionCount: completedMissionCount,
+        totalMissionCount: 3,
+        onRewardTapped: didTapRewardButton,
+        showCollectedRewardButtonTapped: showCollectedRewardButtonTapped,
+        getRewardButtonTapped: getRewardButtonTapped
+      )
     }
     .padding(.horizontal, 20)
     .padding(.top, 24)
@@ -20,6 +46,114 @@ struct TodayMissionView: View {
   }
 }
 
+// MARK: - MissionProgressView
+struct MissionProgressView: View {
+  private let completedMissionCount: Int
+  private let totalMissionCount: Int
+  private let onRewardTapped: () -> Void
+  private let showCollectedRewardButtonTapped: () -> Void
+  private let getRewardButtonTapped: () -> Void
+  
+  init(
+    completedMissionCount: Int,
+    totalMissionCount: Int,
+    onRewardTapped: @escaping () -> Void,
+    showCollectedRewardButtonTapped: @escaping () -> Void,
+    getRewardButtonTapped: @escaping () -> Void
+  ) {
+    self.completedMissionCount = completedMissionCount
+    self.totalMissionCount = totalMissionCount
+    self.onRewardTapped = onRewardTapped
+    self.showCollectedRewardButtonTapped = showCollectedRewardButtonTapped
+    self.getRewardButtonTapped = getRewardButtonTapped
+  }
+  
+  private var steps: [String] {
+    var result = ["시작"]
+    for i in 1..<totalMissionCount {
+      result.append("\(i)개")
+    }
+    result.append("Goal")
+    return result
+  }
+  private var isAllMissionCompleted: Bool {
+    completedMissionCount == totalMissionCount
+  }
+  private var currentStepIndex: Int {
+    min(completedMissionCount, steps.count - 1)
+  }
+  
+  var body: some View {
+    VStack(spacing: 16) {
+      headerSection
+      ProgressView(
+        totalCount: totalMissionCount,
+        completedSteps: completedMissionCount,
+        progressTitles: steps
+      )
+      
+      if isAllMissionCompleted {
+        HStack(spacing: 8) {
+          CTAButton(
+            size: .large,
+            style: .secondary,
+            title: "모은 리워드보기",
+            action: showCollectedRewardButtonTapped
+          )
+          
+          CTAButton(
+            size: .large,
+            style: .primary,
+            title: "리워드 받기",
+            action: getRewardButtonTapped
+          )
+        }
+      }
+    }
+    .padding(.vertical, 20)
+    .padding(.horizontal, 16)
+    .background(ColorResource.Neutral._800.color)
+    .clipShape(RoundedRectangle(cornerRadius: 20))
+  }
+  
+  // MARK: - Header Section
+  private var headerSection: some View {
+    HStack(alignment: .top, spacing: 0) {
+      HStack(alignment: .top, spacing: 12) {
+        Circle()
+          .frame(width: 36, height: 36)
+          .foregroundStyle(ColorResource.Neutral._500.color)
+          .overlay {
+            ImageResource.fireworks.image
+          }
+        
+        VStack(alignment: .leading, spacing: 4) {
+          Text("오늘의 미션")
+            .textStyle(.h5)
+            .foregroundStyle(ColorResource.Text.main.color)
+          
+          Text("단 \(totalMissionCount)개만 도전해 보세요")
+            .textStyle(.body5)
+            .foregroundStyle(ColorResource.Text.Body.primary.color)
+        }
+      }
+      
+      Spacer()
+      
+      BadgeImageView(
+        text: "리워드",
+        textColor: ColorResource.Text.Body.primary.color,
+        font: Typography.Body.body6,
+        rightImage: ImageResource.Chevron.right.image
+      )
+      .onTapGesture {
+        onRewardTapped()
+      }
+    }
+  }
+}
+
+// MARK: - TodayMissionTimerView
 struct TodayMissionTimerView: View {
   let remainingSeconds: Int
   

@@ -43,9 +43,7 @@ let project = Project(
       settings: .settings(
         base: [
           "DEVELOPMENT_TEAM": "MYR6MP3VKX",
-          "CODE_SIGN_STYLE": "Manual",
-          "PROVISIONING_PROFILE_SPECIFIER": "match Development com.mashup.DHC-iOS",
-          "CODE_SIGN_IDENTITY": "Apple Development: Hyerin Choe (QKKN56KGD9)",
+          "CODE_SIGN_STYLE": "Automatic",
           "OTHER_LDFLAGS": "$(inherited) -ObjC -all_load",
         ]
       )

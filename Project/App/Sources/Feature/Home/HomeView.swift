@@ -62,7 +62,13 @@ struct HomeView: View {
         ImageResource.fortuneCardShadow.image
           .padding(.bottom, 12)
         
-        TodayMissionView(remainingSeconds: store.remainingSeconds)
+        TodayMissionView(
+          remainingSeconds: store.remainingSeconds,
+          completedMissionCount: store.completedMissionCount,
+          didTapRewardButton: {
+            store.send(.delegate(.moveToReportTab))
+          }
+        )
 
         MissionListView(
           store: store.scope(

@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "Fireworks.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
