@@ -8,9 +8,25 @@
 import SwiftUI
 
 struct TodayMissionView: View {
-  let remainingSeconds: Int
-  let completedMissionCount: Int
-  let didTapRewardButton: () -> Void
+  private let remainingSeconds: Int
+  private let completedMissionCount: Int
+  private let didTapRewardButton: () -> Void
+  private let showCollectedRewardButtonTapped: () -> Void
+  private let getRewardButtonTapped: () -> Void
+  
+  init(
+    remainingSeconds: Int,
+    completedMissionCount: Int,
+    didTapRewardButton: @escaping () -> Void,
+    showCollectedRewardButtonTapped: @escaping () -> Void,
+    getRewardButtonTapped: @escaping () -> Void
+  ) {
+    self.remainingSeconds = remainingSeconds
+    self.completedMissionCount = completedMissionCount
+    self.didTapRewardButton = didTapRewardButton
+    self.showCollectedRewardButtonTapped = showCollectedRewardButtonTapped
+    self.getRewardButtonTapped = getRewardButtonTapped
+  }
   
   var body: some View {
     VStack(spacing: 24) {
@@ -19,9 +35,9 @@ struct TodayMissionView: View {
       MissionProgressView(
         completedMissionCount: completedMissionCount,
         totalMissionCount: 3,
-        onRewardTapped: {
-          didTapRewardButton()
-        }
+        onRewardTapped: didTapRewardButton,
+        showCollectedRewardButtonTapped: showCollectedRewardButtonTapped,
+        getRewardButtonTapped: getRewardButtonTapped
       )
     }
     .padding(.horizontal, 20)
@@ -32,9 +48,25 @@ struct TodayMissionView: View {
 
 // MARK: - MissionProgressView
 struct MissionProgressView: View {
-  let completedMissionCount: Int
-  let totalMissionCount: Int
-  let onRewardTapped: () -> Void
+  private let completedMissionCount: Int
+  private let totalMissionCount: Int
+  private let onRewardTapped: () -> Void
+  private let showCollectedRewardButtonTapped: () -> Void
+  private let getRewardButtonTapped: () -> Void
+  
+  init(
+    completedMissionCount: Int,
+    totalMissionCount: Int,
+    onRewardTapped: @escaping () -> Void,
+    showCollectedRewardButtonTapped: @escaping () -> Void,
+    getRewardButtonTapped: @escaping () -> Void
+  ) {
+    self.completedMissionCount = completedMissionCount
+    self.totalMissionCount = totalMissionCount
+    self.onRewardTapped = onRewardTapped
+    self.showCollectedRewardButtonTapped = showCollectedRewardButtonTapped
+    self.getRewardButtonTapped = getRewardButtonTapped
+  }
   
   private var steps: [String] {
     var result = ["시작"]
@@ -44,7 +76,9 @@ struct MissionProgressView: View {
     result.append("Goal")
     return result
   }
-  
+  private var isAllMissionCompleted: Bool {
+    completedMissionCount == totalMissionCount
+  }
   private var currentStepIndex: Int {
     min(completedMissionCount, steps.count - 1)
   }
@@ -57,6 +91,24 @@ struct MissionProgressView: View {
         completedSteps: completedMissionCount,
         progressTitles: steps
       )
+      
+      if isAllMissionCompleted {
+        HStack(spacing: 8) {
+          CTAButton(
+            size: .large,
+            style: .secondary,
+            title: "모은 리워드보기",
+            action: showCollectedRewardButtonTapped
+          )
+          
+          CTAButton(
+            size: .large,
+            style: .primary,
+            title: "리워드 받기",
+            action: getRewardButtonTapped
+          )
+        }
+      }
     }
     .padding(.vertical, 20)
     .padding(.horizontal, 16)
