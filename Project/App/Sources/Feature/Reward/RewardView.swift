@@ -26,13 +26,7 @@ struct RewardView: View {
           placeholderGraphic
             .padding(.bottom, 25)
           
-          HeaderView(
-            level: store.currentLevel,
-            levelName: store.currentLevelInfo.name,
-            onInfoTapped: {
-              store.send(.infoButtonTapped)
-            }
-          )
+          headerView
           .padding(.bottom, 40)
           
           VStack(spacing: 8) {
@@ -40,6 +34,7 @@ struct RewardView: View {
             RewardProgressCard(
               currentPoints: store.currentPoints,
               pointsToNextLevel: store.pointsToNextLevel,
+              currentLevel: store.currentLevel,
               progress: store.progress,
               levelInfo: store.levelInfo
             )
@@ -72,27 +67,22 @@ struct RewardView: View {
     }
     .frame(height: 120)
   }
-}
-
-fileprivate struct HeaderView: View {
-  let level: Int
-  let levelName: String
-  let onInfoTapped: () -> Void
   
-  var body: some View {
-    // 헤더: 레벨 정보
+  var headerView: some View {
     HStack(spacing: 8) {
       BadgeView(
-        text: "Lv.\(level)",
+        text: "Lv.\(store.currentLevel)",
         textColor: ColorResource.Text.Body.primary.color,
-        font: Typography.Head.h7 // TODO: 타이포그라피 피그마 수정 후 반영 필요
+        font: Typography.Head.h8
       )
       
-      Text(levelName)
+      Text(store.currentLevelInfo.name)
         .textStyle(.h1)
         .foregroundStyle(LinearGradient(.text02))
       
-      Button(action: onInfoTapped) {
+      Button {
+        store.send(.infoButtonTapped)
+      } label: {
         Image(.Icon.info)
           .resizable()
           .renderingMode(.template)
@@ -108,111 +98,94 @@ fileprivate struct HeaderView: View {
 struct RewardProgressCard: View {
   let currentPoints: Int
   let pointsToNextLevel: Int
+  let currentLevel: Int
   let progress: Double
   let levelInfo: [LevelInfo]
   
+  private var totalSteps: Int {
+    // levelInfo에서 -1이 아닌 가장 큰 level 찾기
+    levelInfo.filter { $0.level != -1 }.map { $0.level }.max() ?? 10
+  }
+  
+  private var milestones: [Milestone] {
+    levelInfo.map { info in
+      Milestone(
+        level: info.level,
+        title: info.level == -1 ? "Goal" : "Lv.\(info.level)"
+      )
+    }
+  }
+  
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
-      // 포인트 표시
-      VStack(alignment: .leading, spacing: 0) {
-        Text("지금까지 얻은 리워드")
-          .textStyle(.body5)
-          .foregroundStyle(ColorResource.Neutral._300.color)
-        
-        HStack(alignment: .firstTextBaseline, spacing: 4) {
-          Text("\(currentPoints)")
-            .textStyle(.h1)
-            .foregroundStyle(ColorResource.Text.main.color)
-          
-          Text("pt")
-            .textStyle(.body1)
-            .foregroundStyle(ColorResource.Neutral._300.color)
-        }
-      }
+      progressTopSection
       
-      Rectangle()
-        .frame(height: 1)
-        .foregroundStyle(ColorResource.Background.glassEffect.color)
+      dividerView
       
-      // 프로그레스 바
-      RewardProgressBar(
-        progress: progress,
-        pointsToNextLevel: pointsToNextLevel,
-        levelInfo: levelInfo
-      )
-      .padding(.bottom, 32)
+      progressBottomSection
     }
     .padding(20)
     .background(ColorResource.Neutral._700.color)
     .clipShape(RoundedRectangle(cornerRadius: 12))
   }
-}
-
-// MARK: - RewardProgressBar
-struct RewardProgressBar: View {
-  let progress: Double
-  let pointsToNextLevel: Int
-  let levelInfo: [LevelInfo]
   
-  var body: some View {
-    VStack(spacing: 8) {
-      // 말풍선
-      GeometryReader { geometry in
-        HStack(spacing: 0) {
-          Spacer()
-            .frame(width: max(0, geometry.size.width * progress - 80))
-          
-          TooltipView(
-            type: .gradient,
-            message: "다음 레벨까지 200pt 남았어요"
-          )
-          
-          Spacer()
-        }
-      }
-      .frame(height: 50)
+  var progressTopSection: some View {
+    VStack(alignment: .leading, spacing: 0) {
+      Text("지금까지 얻은 리워드")
+        .textStyle(.body5)
+        .foregroundStyle(ColorResource.Neutral._300.color)
       
-      // 프로그레스 바
-      GeometryReader { geometry in
-        ZStack(alignment: .leading) {
-          // 배경 바
-          RoundedRectangle(cornerRadius: 4)
-            .fill(ColorResource.Neutral._700.color)
-            .frame(height: 8)
-          
-          // 진행 바
-          RoundedRectangle(cornerRadius: 4)
-            .fill(
-              LinearGradient(
-                colors: [
-                  ColorResource.Violet._400.color,
-                  ColorResource.Violet._200.color
-                ],
-                startPoint: .leading,
-                endPoint: .trailing
-              )
-            )
-            .frame(width: geometry.size.width * progress, height: 8)
-        }
-      }
-      .frame(height: 8)
-      
-      // 레벨 마커
-      HStack(spacing: 0) {
-        ForEach(Array(levelInfo.enumerated()), id: \.offset) { index, info in
-          Text(info.level == -1 ? "Goal" : "lv.\(info.level)")
-            .textStyle(.body7)
-            .foregroundStyle(ColorResource.Neutral._400.color)
-          
-          if index < levelInfo.count - 1 {
-            Spacer()
-          }
-        }
+      HStack(alignment: .firstTextBaseline, spacing: 4) {
+        Text("\(currentPoints)")
+          .textStyle(.h1)
+          .foregroundStyle(ColorResource.Text.main.color)
+        
+        Text("pt")
+          .textStyle(.body1)
+          .foregroundStyle(ColorResource.Neutral._300.color)
       }
     }
   }
+  
+  var dividerView: some View {
+    Rectangle()
+      .frame(height: 1)
+      .foregroundStyle(ColorResource.Background.glassEffect.color)
+  }
+  
+  var progressBottomSection: some View {
+    VStack(spacing: 8) {
+      // 툴팁
+      tooltipView
+      
+      // ProgressView
+      ProgressView(
+        totalSteps: totalSteps,
+        currentLevel: currentLevel,
+        milestones: milestones
+      )
+    }
+  }
+  
+  private var tooltipView: some View {
+    GeometryReader { geometry in
+      HStack(spacing: 0) {
+        Spacer()
+          .frame(width: max(0, geometry.size.width * progress - 80))
+        
+        TooltipView(
+          type: .gradient,
+          message: "다음 레벨까지 \(pointsToNextLevel)pt 남았어요"
+        )
+        
+        Spacer()
+      }
+    }
+    .frame(height: 50)
+  }
 }
 
+// MARK: - PreminumCard
 struct PreminumCard: View {
   private let onPremiumButtonTapped: () -> Void
   
