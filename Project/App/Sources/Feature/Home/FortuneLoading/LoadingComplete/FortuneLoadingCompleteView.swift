@@ -60,9 +60,12 @@ struct FortuneLoadingCompleteView: View {
         .rotationEffect(.degrees(-4))
         .padding(.top, 20)
         .overlay(alignment: .top) {
-          OnboardingTooltipView(message: "Flip!")
-            .padding(.trailing, 10)
-            .padding(.top, -40)
+          TooltipView(
+            type: .gradient,
+            message: "Flip!"
+          )
+          .padding(.trailing, 10)
+          .padding(.top, -40)
         }
       }
     )

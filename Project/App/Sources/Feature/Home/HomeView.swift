@@ -67,6 +67,12 @@ struct HomeView: View {
           completedMissionCount: store.completedMissionCount,
           didTapRewardButton: {
             store.send(.delegate(.moveToReportTab))
+          },
+          showCollectedRewardButtonTapped: {
+            
+          },
+          getRewardButtonTapped: {
+            
           }
         )
 

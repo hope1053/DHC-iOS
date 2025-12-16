@@ -10,6 +10,7 @@ import Foundation
 enum TabKind {
   case home
   case report
+  case reward
   case myPage
 
   var title: String {
@@ -18,6 +19,8 @@ enum TabKind {
       return "홈"
     case .report:
       return "리포트"
+    case .reward:
+      return "리워드"
     case .myPage:
       return "마이페이지"
     }

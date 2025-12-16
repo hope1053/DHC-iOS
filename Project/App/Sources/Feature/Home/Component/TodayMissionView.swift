@@ -68,12 +68,12 @@ struct MissionProgressView: View {
     self.getRewardButtonTapped = getRewardButtonTapped
   }
   
-  private var steps: [String] {
-    var result = ["시작"]
+  private var steps: [Milestone] {
+    var result: [Milestone] = [.init(level: 0, title: "시작")]
     for i in 1..<totalMissionCount {
-      result.append("\(i)개")
+      result.append(.init(level: i, title: "\(i)개"))
     }
-    result.append("Goal")
+    result.append(.init(level: totalMissionCount, title: "Goal"))
     return result
   }
   private var isAllMissionCompleted: Bool {
@@ -87,9 +87,9 @@ struct MissionProgressView: View {
     VStack(spacing: 16) {
       headerSection
       ProgressView(
-        totalCount: totalMissionCount,
-        completedSteps: completedMissionCount,
-        progressTitles: steps
+        totalSteps: totalMissionCount,
+        currentLevel: completedMissionCount,
+        milestones: steps
       )
       
       if isAllMissionCompleted {
