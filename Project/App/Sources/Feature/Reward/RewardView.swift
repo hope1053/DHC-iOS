@@ -162,23 +162,10 @@ struct RewardProgressBar: View {
           Spacer()
             .frame(width: max(0, geometry.size.width * progress - 80))
           
-          VStack(spacing: 0) {
-            Text("다음 레벨까지 \(pointsToNextLevel)pt 남았어요")
-              .textStyle(.body6)
-              .foregroundStyle(ColorResource.Text.main.color)
-              .padding(.horizontal, 12)
-              .padding(.vertical, 8)
-              .background {
-                RoundedRectangle(cornerRadius: 8)
-                  .foregroundStyle(ColorResource.Violet._400.color)
-              }
-            
-            // 말풍선 꼬리
-            Triangle()
-              .fill(ColorResource.Violet._400.color)
-              .frame(width: 12, height: 6)
-              .offset(y: -1)
-          }
+          TooltipView(
+            type: .gradient,
+            message: "다음 레벨까지 200pt 남았어요"
+          )
           
           Spacer()
         }
@@ -272,25 +259,4 @@ struct PreminumCard: View {
     .background(ColorResource.Neutral._700.color)
     .clipShape(RoundedRectangle(cornerRadius: 12))
   }
-}
-
-// MARK: - Triangle Shape (말풍선 꼬리)
-struct Triangle: Shape {
-  func path(in rect: CGRect) -> Path {
-    var path = Path()
-    path.move(to: CGPoint(x: rect.midX, y: rect.maxY))
-    path.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
-    path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
-    path.closeSubpath()
-    return path
-  }
-}
-
-#Preview {
-  RewardView(
-    store: Store(
-      initialState: .init(),
-      reducer: RewardReducer.init
-    )
-  )
 }

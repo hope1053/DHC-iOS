@@ -39,7 +39,8 @@ struct MissionListView: View {
           }
           .overlay {
             if store.isTooltipVisible {
-              HomeToolTipView(
+              TooltipView(
+                type: .solid,
                 message: "좋은 금융 습관 형성을 위해\n2주간 매일 진행하는 미션이에요!"
               )
               .offset(y: -50)
