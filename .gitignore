@@ -76,5 +76,9 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 
+### Cursor ###
+.cursor/
+
+
 # Env
 DHCEnvironment.swift
