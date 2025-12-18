@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TodayMissionView: View {
+struct TodayMissionView: View, Equatable {
   private let remainingSeconds: Int
   private let completedMissionCount: Int
   private let didTapRewardButton: () -> Void
@@ -28,9 +28,15 @@ struct TodayMissionView: View {
     self.getRewardButtonTapped = getRewardButtonTapped
   }
   
+  static func == (lhs: TodayMissionView, rhs: TodayMissionView) -> Bool {
+    lhs.remainingSeconds == rhs.remainingSeconds &&
+    lhs.completedMissionCount == rhs.completedMissionCount
+  }
+  
   var body: some View {
     VStack(spacing: 24) {
       TodayMissionTimerView(remainingSeconds: remainingSeconds)
+        .equatable()
       
       MissionProgressView(
         completedMissionCount: completedMissionCount,
@@ -39,6 +45,7 @@ struct TodayMissionView: View {
         showCollectedRewardButtonTapped: showCollectedRewardButtonTapped,
         getRewardButtonTapped: getRewardButtonTapped
       )
+      .equatable()
     }
     .padding(.horizontal, 20)
     .padding(.top, 24)
@@ -47,7 +54,7 @@ struct TodayMissionView: View {
 }
 
 // MARK: - MissionProgressView
-struct MissionProgressView: View {
+struct MissionProgressView: View, Equatable {
   private let completedMissionCount: Int
   private let totalMissionCount: Int
   private let onRewardTapped: () -> Void
@@ -68,6 +75,11 @@ struct MissionProgressView: View {
     self.getRewardButtonTapped = getRewardButtonTapped
   }
   
+  static func == (lhs: MissionProgressView, rhs: MissionProgressView) -> Bool {
+    lhs.completedMissionCount == rhs.completedMissionCount &&
+    lhs.totalMissionCount == rhs.totalMissionCount
+  }
+  
   private var steps: [Milestone] {
     var result: [Milestone] = [.init(level: 0, title: "시작")]
     for i in 1..<totalMissionCount {
@@ -77,7 +89,7 @@ struct MissionProgressView: View {
     return result
   }
   private var isAllMissionCompleted: Bool {
-    completedMissionCount == totalMissionCount
+    completedMissionCount >= totalMissionCount
   }
   private var currentStepIndex: Int {
     min(completedMissionCount, steps.count - 1)
@@ -154,8 +166,12 @@ struct MissionProgressView: View {
 }
 
 // MARK: - TodayMissionTimerView
-struct TodayMissionTimerView: View {
+struct TodayMissionTimerView: View, Equatable {
   let remainingSeconds: Int
+  
+  static func == (lhs: TodayMissionTimerView, rhs: TodayMissionTimerView) -> Bool {
+    lhs.remainingSeconds == rhs.remainingSeconds
+  }
   
   var body: some View {
     VStack(spacing: 0) {
