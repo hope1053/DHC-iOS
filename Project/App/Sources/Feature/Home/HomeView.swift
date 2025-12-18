@@ -75,6 +75,7 @@ struct HomeView: View {
             
           }
         )
+        .equatable()
 
         MissionListView(
           store: store.scope(
