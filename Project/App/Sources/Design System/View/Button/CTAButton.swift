@@ -106,7 +106,7 @@ extension CTAButton {
     var disabledForegroundColor: Color {
       switch self {
         case .primary:
-          return ColorResource.Neutral._200.color
+          return ColorResource.Neutral._400.color
         case .secondary:
           return ColorResource.Neutral._300.color
         case .tertiary:
@@ -117,7 +117,7 @@ extension CTAButton {
     var disabledBackgroundColor: Color {
       switch self {
         case .primary:
-          return ColorResource.Neutral._300.color
+          return ColorResource.Neutral._600.color
         case .secondary:
           return ColorResource.Neutral._500.color
         case .tertiary:
