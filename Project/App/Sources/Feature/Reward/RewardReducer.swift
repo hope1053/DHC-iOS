@@ -56,7 +56,8 @@ struct RewardReducer {
 
   enum Action {
     // View Action
-    case premiumBenefitButtonTapped
+    case onOpenRewardButtonTapped
+    case onWhatIsRewardButtonTapped
     case infoButtonTapped
     
     // Internal Action
@@ -67,8 +68,12 @@ struct RewardReducer {
   var body: some Reducer<State, Action> {
     Reduce { state, action in
       switch action {
-      case .premiumBenefitButtonTapped:
-        // TODO: 프리미엄 혜택 얻기 액션 구현
+      case .onOpenRewardButtonTapped:
+        // TODO: 리워드 열기 버튼 액션 구현
+        return .none
+        
+      case .onWhatIsRewardButtonTapped:
+        // TODO: 리워드는 뭔가요? > 버튼 액션 구현
         return .none
         
       case .infoButtonTapped:
