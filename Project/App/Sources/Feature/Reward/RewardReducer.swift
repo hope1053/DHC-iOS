@@ -5,6 +5,8 @@
 //  Created by hyerin on 12/11/25.
 //
 
+import SwiftUI
+
 import ComposableArchitecture
 
 @Reducer
@@ -49,6 +51,26 @@ struct RewardReducer {
       let currentProgress = Double(currentPoints - currentThreshold)
       return min(max(currentProgress / range, 0), 1.0)
     }
+    
+    var receivedRewards: [RewardItem] = [
+      .init(
+        title: "1년 운세",
+        iconURL: URL(string: "https://www.freepnglogos.com/uploads/apple-logo-png/apple-logo-png-dallas-shootings-don-add-are-speech-zones-used-4.png"),
+        message: "복주머니 lv. 10 달성시 열람 가능해요!"
+      ),
+      .init(
+        title: "전반적 사주",
+        iconURL: URL(string: "https://www.freepnglogos.com/uploads/apple-logo-png/apple-logo-png-dallas-shootings-don-add-are-speech-zones-used-4.png"),
+        message: "복주머니 lv. 10 달성시 열람 가능해요!"
+      ),
+      .init(
+        title: "복합 사주",
+        iconURL: URL(string: "https://www.freepnglogos.com/uploads/apple-logo-png/apple-logo-png-dallas-shootings-don-add-are-speech-zones-used-4.png"),
+        message: nil
+      )
+    ]
+    var toastType: ToastType = .textWithCheck("")
+    var isToastPresented: Bool = false
 
     init() {
     }
@@ -56,10 +78,14 @@ struct RewardReducer {
 
   enum Action {
     // View Action
-    case premiumBenefitButtonTapped
+    case onOpenRewardButtonTapped
+    case onWhatIsRewardButtonTapped
     case infoButtonTapped
+    case onRewardItemTapped(action: ReceivedRewardAction)
+    case toastPresentedChanged(Bool)
     
     // Internal Action
+    case showToast(ToastType)
     
     // Route Action
   }
@@ -67,12 +93,34 @@ struct RewardReducer {
   var body: some Reducer<State, Action> {
     Reduce { state, action in
       switch action {
-      case .premiumBenefitButtonTapped:
-        // TODO: 프리미엄 혜택 얻기 액션 구현
+      case .onOpenRewardButtonTapped:
+        // TODO: 리워드 열기 버튼 액션 구현
+        return .none
+        
+      case .onWhatIsRewardButtonTapped:
+        // TODO: 리워드는 뭔가요? > 버튼 액션 구현
         return .none
         
       case .infoButtonTapped:
         // TODO: 정보 버튼 액션 구현
+        return .none
+        
+      case .onRewardItemTapped(let action):
+        switch action {
+        case .moveToDetailView(let id):
+          return .none
+        case .showToast(let toastMessage):
+          state.toastType = .imageAndText(ImageResource.Icon.gift.image, toastMessage)
+          state.isToastPresented = true
+          return .none
+        }
+        
+      case .toastPresentedChanged(let isToastPresented):
+        state.isToastPresented = isToastPresented
+        return .none
+        
+      case .showToast(let toastType):
+        state.toastType = toastType
         return .none
       }
     }

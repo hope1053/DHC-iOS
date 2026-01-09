@@ -7,10 +7,27 @@
 
 import SwiftUI
 
+// MARK: - MilestoneType
+enum MilestoneType {
+  case dot
+  case image(Image)
+}
+
 // MARK: - Milestone
 struct Milestone {
   let level: Int
   let title: String
+  let type: MilestoneType
+  
+  init(
+    level: Int,
+    title: String,
+    type: MilestoneType = .dot
+  ) {
+    self.level = level
+    self.title = title
+    self.type = type
+  }
 }
 
 // MARK: - ProgressView
@@ -66,7 +83,7 @@ struct ProgressView: View {
   }
   
   var body: some View {
-    VStack(spacing: 8) {
+    VStack(spacing: 12) {
       progressBar
       progressLabels
     }
@@ -89,15 +106,13 @@ struct ProgressView: View {
           .fill(ColorResource.Text.Highlights.primary.color)
           .frame(width: max(28, filledWidth), height: 12)
         
-        // Milestone dots (항상 4개, 균등 배치)
+        // Milestone markers (항상 4개, 균등 배치)
         HStack(spacing: 0) {
           ForEach(Array(milestones.enumerated()), id: \.offset) { index, milestone in
             if milestone.level == currentLevel {
               Spacer()
             } else {
-              Circle()
-                .fill(ColorResource.Text.Highlights.primary.color)
-                .frame(width: 6, height: 6)
+              milestoneMarker(for: milestone.type)
               
               if index < milestones.count - 1 {
                 Spacer()
@@ -131,14 +146,29 @@ struct ProgressView: View {
     
     if isLastMilestone {
       // 마지막 milestone (Goal)
-      return currentLevel >= milestone.level
-        ? ColorResource.Text.Highlights.primary.color
-        : ColorResource.Text.main.color
+      return ColorResource.Text.main.color
     } else {
       // 일반 milestone
       return currentLevel == milestone.level
         ? ColorResource.Text.Highlights.primary.color
         : ColorResource.Neutral._500.color
+    }
+  }
+  
+  // Milestone 마커 생성
+  @ViewBuilder
+  private func milestoneMarker(for type: MilestoneType) -> some View {
+    switch type {
+    case .dot:
+      Circle()
+        .fill(ColorResource.Text.Highlights.primary.color)
+        .frame(width: 6, height: 6)
+      
+    case .image(let image):
+      image
+        .resizable()
+        .scaledToFit()
+        .frame(width: 24, height: 24)
     }
   }
 }

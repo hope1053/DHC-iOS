@@ -63,7 +63,9 @@ struct HomeReducer {
     }
   }
 
-  enum Action {
+  enum Action: BindableAction {
+    case binding(BindingAction<State>)
+    
     // View Actions
     case onAppear
 
@@ -104,12 +106,17 @@ struct HomeReducer {
   }
 
   var body: some ReducerOf<Self> {
+    BindingReducer()
+    
     Scope(state: \.missionList, action: \.missionList) {
       MissionListReducer()
     }
 
     Reduce { state, action in
       switch action {
+      case .binding:
+        return .none
+        
       case .onAppear:
         if state.isFirstLaunchOfToday {
           withAnimation(.easeInOut(duration: 0.5)) {
