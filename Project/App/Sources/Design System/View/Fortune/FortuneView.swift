@@ -8,20 +8,20 @@
 import SwiftUI
 
 struct FortuneView<Card: View>: View {
-  private let date: String?
+  private let title: String?
   private let score: String
   private let summary: String
   private let gradientType: LinearGradient.LinearType
   private let cardView: Card
   
   init(
-    date: String?,
+    title: String?,
     score: String,
     summary: String,
     gradientType: LinearGradient.LinearType,
     @ViewBuilder cardView: () -> Card
   ) {
-    self.date = date
+    self.title = title
     self.score = score
     self.summary = summary
     self.gradientType = gradientType
@@ -31,7 +31,7 @@ struct FortuneView<Card: View>: View {
   var body: some View {
     VStack(spacing: 0) {
       FortuneScoreView(
-        date: date,
+        title: title,
         score: score,
         summary: summary,
         gradientType: gradientType

@@ -14,7 +14,7 @@ struct RewardFortuneDetail: Equatable {
   let overallFortune: OverallFortune
   let categoryFortuneItems: [CategoryFortuneItem]
   let elementBalance: ElementBalance
-  let elementDescription: String
+  let elementShift: ElementShift
   let tipInfos: [Tip]
   
   init(
@@ -24,7 +24,7 @@ struct RewardFortuneDetail: Equatable {
     overallFortune: OverallFortune,
     categoryFortuneItems: [CategoryFortuneItem],
     elementBalance: ElementBalance,
-    elementDescription: String,
+    elementShift: ElementShift,
     tipInfos: [Tip]
   ) {
     self.title = title
@@ -33,7 +33,7 @@ struct RewardFortuneDetail: Equatable {
     self.overallFortune = overallFortune
     self.categoryFortuneItems = categoryFortuneItems
     self.elementBalance = elementBalance
-    self.elementDescription = elementDescription
+    self.elementShift = elementShift
     self.tipInfos = tipInfos
   }
 }
@@ -98,7 +98,13 @@ extension RewardFortuneDetail {
     }
   }
   
-  struct Tip: Equatable, Hashable {
+  struct ElementShift: Equatable {
+    let title: String
+    let description: String
+  }
+  
+  struct Tip: Equatable, Identifiable {
+    var id: String { content }
     let imageURL: URL?
     let title: String
     let content: String
@@ -180,17 +186,20 @@ extension RewardFortuneDetail {
         )
       ]
     ),
-    elementDescription: """
-    화의 기운은
-    ‘결단력・집중・주체성’을 밝히는 에너지예요.
-    불안이나 충동으로 흐르면 지치기 쉽지만,
-    올바르게 쓰이면 원하는 방향으로 크게 나아가는 달이 됩니다.
+    elementShift: .init(
+      title: "기운변화 타이틀",
+      description: """
+      화의 기운은
+      ‘결단력・집중・주체성’을 밝히는 에너지예요.
+      불안이나 충동으로 흐르면 지치기 쉽지만,
+      올바르게 쓰이면 원하는 방향으로 크게 나아가는 달이 됩니다.
 
-    그래서 이번 달엔…
-    - 지금의 상황을 기준으로 결정해보세요.
-    - 감정보다는 리듬을 안정시키면 잘 흘러가요.
-    - 내일의 나에게 분명 고마운 선택을 하게 될 거예요.
-    """,
+      그래서 이번 달엔…
+      - 지금의 상황을 기준으로 결정해보세요.
+      - 감정보다는 리듬을 안정시키면 잘 흘러가요.
+      - 내일의 나에게 분명 고마운 선택을 하게 될 거예요.
+      """
+    ),
     tipInfos: [
       .init(
         imageURL: .urlForResource(.knife),

@@ -8,18 +8,18 @@
 import SwiftUI
 
 struct FortuneScoreView: View {
-  private let date: String?
+  private let title: String?
   private let score: String
   private let summary: String
   private let gradientType: LinearGradient.LinearType
   
   init(
-    date: String?,
+    title: String?,
     score: String,
     summary: String,
     gradientType: LinearGradient.LinearType
   ) {
-    self.date = date
+    self.title = title
     self.score = score
     self.summary = summary
     self.gradientType = gradientType
@@ -27,9 +27,9 @@ struct FortuneScoreView: View {
   
   var body: some View {
     VStack(spacing: 12) {
-      if let date {
+      if let title {
         BadgeView(
-          text: date,
+          text: title,
           textColor: ColorResource.Text.Body.primary.color,
           font: Typography.Body.body6
         )

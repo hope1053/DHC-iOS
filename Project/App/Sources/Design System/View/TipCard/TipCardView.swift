@@ -9,22 +9,27 @@ import SwiftUI
 
 import SDWebImageSwiftUI
 
+enum TipCardType: Equatable {
+  case medium
+  case small(Color?)
+}
+
 struct TipCardView: View {
   private let imageURL: URL?
   private let title: String
   private let content: String
-  private let contentColor: Color?
+  private let type: TipCardType
   
   init(
     imageURL: URL?,
     title: String,
     content: String,
-    contentColor: Color?
+    type: TipCardType
   ) {
     self.imageURL = imageURL
     self.title = title
     self.content = content
-    self.contentColor = contentColor
+    self.type = type
   }
   
   var body: some View {
@@ -42,19 +47,27 @@ struct TipCardView: View {
         .frame(width: 20, height: 20)
         
         Text(title)
-          .foregroundStyle(ColorResource.Neutral._400.color)
+          .foregroundStyle(type == TipCardType.medium ? ColorResource.Neutral._200.color : ColorResource.Neutral._400.color)
           .textStyle(.body5)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       
       HStack(spacing: 8) {
-        if let contentColor {
-          DotView(color: contentColor, size: 8)
+        switch type {
+        case .medium:
+          Text(content)
+            .foregroundStyle(ColorResource.Text.Body.primary.color)
+            .textStyle(.body3)
+          
+        case .small(let contentColor):
+          if let contentColor {
+            DotView(color: contentColor, size: 8)
+          }
+          
+          Text(content)
+            .foregroundStyle(contentColor ?? ColorResource.Text.Body.primary.color)
+            .textStyle(.h3)
         }
-        
-        Text(content)
-          .foregroundStyle(contentColor ?? ColorResource.Text.Body.primary.color)
-          .textStyle(.h3)
       }
     }
     .padding(.horizontal, 16)
