@@ -131,9 +131,7 @@ struct ProgressView: View {
     
     if isLastMilestone {
       // 마지막 milestone (Goal)
-      return currentLevel >= milestone.level
-        ? ColorResource.Text.Highlights.primary.color
-        : ColorResource.Text.main.color
+      return ColorResource.Text.main.color
     } else {
       // 일반 milestone
       return currentLevel == milestone.level
