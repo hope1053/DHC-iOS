@@ -1,5 +1,5 @@
 //
-//  Toast.swift
+//  ToastView.swift
 //  Flifin
 //
 //  Created by 김유빈 on 7/1/25.
@@ -7,21 +7,21 @@
 
 import SwiftUI
 
-struct Toast: View {
-  private let message: String
+struct ToastView: View {
+  private let type: ToastType
   private let backgroundColor: Color
   private let cornerRadius: CGFloat
   private let textStyle: Typography.TypographyStyle
   private let textColor: Color
 
   init(
-    message: String,
+    type: ToastType,
     backgroundColor: Color,
     cornerRadius: CGFloat,
     textStyle: Typography.TypographyStyle,
     textColor: Color
   ) {
-    self.message = message
+    self.type = type
     self.backgroundColor = backgroundColor
     self.cornerRadius = cornerRadius
     self.textStyle = textStyle
@@ -30,10 +30,10 @@ struct Toast: View {
 
   var body: some View {
     HStack(spacing: 8) {
-      CheckMark(size: .small, style: .active)
+      image
         .padding(.vertical, 5)
 
-      Text(message)
+      text
         .textStyle(textStyle)
         .padding(.horizontal, 4)
         .padding(.vertical, 2)
@@ -47,14 +47,23 @@ struct Toast: View {
         .foregroundStyle(backgroundColor)
     }
   }
-}
-
-#Preview {
-  Toast(
-    message: "차근차근 잘하고 있어요!",
-    backgroundColor: ColorResource.Neutral._500.color,
-    cornerRadius: 12,
-    textStyle: Typography.Body.body4,
-    textColor: ColorResource.Text.main.color
-  )
+  
+  @ViewBuilder
+  var image: some View {
+    switch type {
+    case .textWithCheck:
+      CheckMark(size: .small, style: .active)
+    case .imageAndText(let image, _):
+      image
+        .resizable()
+        .frame(width: 20, height: 20)
+    }
+  }
+  
+  var text: some View {
+    switch type {
+    case .textWithCheck(let text), .imageAndText(_, let text):
+      Text(text)
+    }
+  }
 }
