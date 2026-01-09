@@ -40,10 +40,11 @@ struct RewardProgressCardView: View {
   }
   
   private var milestones: [Milestone] {
-    levelInfo.map { info in
+    levelInfo.enumerated().map { index, info in
       Milestone(
         level: info.level,
-        title: info.level == -1 ? "Goal" : "Lv.\(info.level)"
+        title: info.level == -1 ? "Goal" : "Lv.\(info.level)",
+        type: index == 1 ? .image(ImageResource.Icon.gift.image) : .dot
       )
     }
   }
