@@ -33,7 +33,7 @@ struct FortuneDetailView: View {
         VStack(spacing: 24) {
           if let detailInfo = store.detailInfo {
             FortuneView(
-              date: detailInfo.scoreInfo.date,
+              title: detailInfo.scoreInfo.date,
               score: detailInfo.scoreInfo.scoreString,
               summary: detailInfo.scoreInfo.summary,
               gradientType: FortuneScore(score: detailInfo.scoreInfo.score).textGradient,
@@ -133,7 +133,7 @@ struct FortuneDetailView: View {
                 imageURL: tipInfo.imageURL,
                 title: tipInfo.title,
                 content: tipInfo.content,
-                contentColor: tipInfo.contentColor
+                type: .small(tipInfo.contentColor)
               )
             }
           }

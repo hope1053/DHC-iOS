@@ -63,7 +63,7 @@ struct RewardProgressCardView: View {
         title: "리워드 열기",
         action: onOpenRewardButtonTapped
       )
-      .disabled(true)
+//      .disabled(true)
       
       Text("리워드는 뭔가요? >")
         .frame(maxWidth: .infinity)

@@ -15,6 +15,8 @@ struct RewardReducer {
 
   @ObservableState
   struct State: Equatable {
+    var path = StackState<Path.State>()
+    
     var currentPoints: Int = 100
     var currentLevel: Int = 1
     
@@ -88,14 +90,20 @@ struct RewardReducer {
     case showToast(ToastType)
     
     // Route Action
+    case path(StackActionOf<Path>)
+    case moveToRewardDetail
+  }
+  
+  @Reducer
+  enum Path {
+    case rewardDetail(RewardDetailReducer)
   }
 
   var body: some Reducer<State, Action> {
     Reduce { state, action in
       switch action {
       case .onOpenRewardButtonTapped:
-        // TODO: 리워드 열기 버튼 액션 구현
-        return .none
+        return .send(.moveToRewardDetail)
         
       case .onWhatIsRewardButtonTapped:
         // TODO: 리워드는 뭔가요? > 버튼 액션 구현
@@ -107,8 +115,8 @@ struct RewardReducer {
         
       case .onRewardItemTapped(let action):
         switch action {
-        case .moveToDetailView(let id):
-          return .none
+        case .moveToDetailView:
+          return .send(.moveToRewardDetail)
         case .showToast(let toastMessage):
           state.toastType = .imageAndText(ImageResource.Icon.gift.image, toastMessage)
           state.isToastPresented = true
@@ -122,8 +130,23 @@ struct RewardReducer {
       case .showToast(let toastType):
         state.toastType = toastType
         return .none
+        
+      case .moveToRewardDetail:
+        state.path.append(.rewardDetail(RewardDetailReducer.State()))
+        return .none
+        
+      case let .path(action):
+        switch action {
+        case .element(id: let id, action: .rewardDetail(.backButtonTapped)):
+          state.path.pop(from: id)
+          return .none
+          
+        default:
+          return .none
+        }
       }
     }
+    .forEach(\.path, action: \.path)
   }
 }
 
@@ -132,3 +155,5 @@ struct LevelInfo: Equatable {
   let name: String
   let threshold: Int
 }
+
+extension RewardReducer.Path.State: Equatable {}

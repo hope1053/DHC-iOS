@@ -38,7 +38,7 @@ struct FortunePickExampleView: View {
   
   var defaultView: some View {
     FortuneView(
-      date: nil,
+      title: nil,
       score: "?점",
       summary: "운세 카드를 뒤집고\n오늘의 금전운을 확인해보세요",
       gradientType: .text02,
@@ -78,7 +78,7 @@ struct FortunePickExampleView: View {
   var cardFlippedView: some View {
     VStack(spacing: 0) {
       FortuneView(
-        date: nil,
+        title: nil,
         score: "85점",
         summary: "오늘 도착한 금전운이에요.\n함께 확인해볼까요?",
         gradientType: .text02,

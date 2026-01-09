@@ -17,57 +17,64 @@ struct RewardView: View {
   }
   
   var body: some View {
-    VStack(spacing: 0) {
-      DHCNavigationBar(type: .title("리워드"))
-        .padding(.bottom, 24)
-      
-      ScrollView {
-        VStack(spacing: 0) {
-          placeholderGraphic
-            .padding(.bottom, 25)
-          
-          headerView
-          .padding(.bottom, 40)
-          
-          VStack(spacing: 8) {
-            // 메인 리워드 카드
-            RewardProgressCardView(
-              currentPoints: store.currentPoints,
-              pointsToNextLevel: store.pointsToNextLevel,
-              currentLevel: store.currentLevel,
-              progress: store.progress,
-              levelInfo: store.levelInfo,
-              onOpenRewardButtonTapped: {
-                store.send(.onOpenRewardButtonTapped)
-              },
-              onWhatIsRewardButtonTapped: {
-                store.send(.onWhatIsRewardButtonTapped)
-              }
-            )
+    NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
+      VStack(spacing: 0) {
+        DHCNavigationBar(type: .title("리워드"))
+          .padding(.bottom, 24)
+        
+        ScrollView {
+          VStack(spacing: 0) {
+            placeholderGraphic
+              .padding(.bottom, 25)
             
-            ReceivedRewardView(
-              rewards: store.receivedRewards,
-              onRewardItemTapped: { action in
-                store.send(.onRewardItemTapped(action: action))
-              }
-            )
-            .padding(.bottom, 72)
+            headerView
+            .padding(.bottom, 40)
+            
+            VStack(spacing: 8) {
+              // 메인 리워드 카드
+              RewardProgressCardView(
+                currentPoints: store.currentPoints,
+                pointsToNextLevel: store.pointsToNextLevel,
+                currentLevel: store.currentLevel,
+                progress: store.progress,
+                levelInfo: store.levelInfo,
+                onOpenRewardButtonTapped: {
+                  store.send(.onOpenRewardButtonTapped)
+                },
+                onWhatIsRewardButtonTapped: {
+                  store.send(.onWhatIsRewardButtonTapped)
+                }
+              )
+              
+              ReceivedRewardView(
+                rewards: store.receivedRewards,
+                onRewardItemTapped: { action in
+                  store.send(.onRewardItemTapped(action: action))
+                }
+              )
+              .padding(.bottom, 72)
+            }
           }
         }
+        .padding(.horizontal, 20)
       }
-      .padding(.horizontal, 20)
+      .scrollIndicators(.hidden)
+      .radialGradientBackground(
+        type: .backgroundGradient02,
+        endRadiusMultiplier: 1.2,
+        scaleEffectX: 1.8
+      )
+      .background(ColorResource.Background.main.color)
+      .toast(
+        isPresented: $store.isToastPresented.sending(\.toastPresentedChanged),
+        type: store.toastType
+      )
+    } destination: { store in
+      switch store.case {
+      case .rewardDetail(let store):
+        RewardDetailView(store: store)
+      }
     }
-    .scrollIndicators(.hidden)
-    .radialGradientBackground(
-      type: .backgroundGradient02,
-      endRadiusMultiplier: 1.2,
-      scaleEffectX: 1.8
-    )
-    .background(ColorResource.Background.main.color)
-    .toast(
-      isPresented: $store.isToastPresented.sending(\.toastPresentedChanged),
-      type: store.toastType
-    )
   }
   
   private var placeholderGraphic: some View {

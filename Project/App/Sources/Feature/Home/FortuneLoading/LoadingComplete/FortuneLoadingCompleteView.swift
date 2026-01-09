@@ -35,7 +35,7 @@ struct FortuneLoadingCompleteView: View {
   
   var defaultView: some View {
     FortuneView(
-      date: store.scoreInfo.date,
+      title: store.scoreInfo.date,
       score: "?점",
       summary: "운세 카드를 뒤집고\n오늘의 금전운을 확인해보세요",
       gradientType: .text02,
@@ -75,7 +75,7 @@ struct FortuneLoadingCompleteView: View {
   
   var cardFlippedView: some View {
     FortuneView(
-      date: store.scoreInfo.date,
+      title: store.scoreInfo.date,
       score: store.scoreInfo.scoreString,
       summary: store.scoreInfo.summary,
       gradientType: FortuneScore(score: store.scoreInfo.score).textGradient,
