@@ -85,7 +85,9 @@ extension CTAButton {
     
     var foregroundColor: Color {
       switch self {
-        case .primary, .secondary:
+        case .primary:
+        return ColorResource.Background.main.color
+        case .secondary:
           return ColorResource.Text.main.color
         case .tertiary:
           return ColorResource.Neutral._300.color
