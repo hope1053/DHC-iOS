@@ -30,8 +30,8 @@ struct Milestone {
   }
 }
 
-// MARK: - ProgressView
-struct ProgressView: View {
+// MARK: - MilestoneProgressView
+struct MilestoneProgressView: View {
   private let totalSteps: Int
   private let currentLevel: Int
   private let milestones: [Milestone]
@@ -142,17 +142,9 @@ struct ProgressView: View {
   
   // 라벨 색상 결정
   private func labelColor(for milestone: Milestone, index: Int) -> Color {
-    let isLastMilestone = index == milestones.count - 1
-    
-    if isLastMilestone {
-      // 마지막 milestone (Goal)
-      return ColorResource.Text.main.color
-    } else {
-      // 일반 milestone
-      return currentLevel == milestone.level
-        ? ColorResource.Text.Highlights.primary.color
-        : ColorResource.Neutral._500.color
-    }
+    return currentLevel == milestone.level
+      ? ColorResource.Text.Highlights.primary.color
+      : ColorResource.Neutral._500.color
   }
   
   // Milestone 마커 생성

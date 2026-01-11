@@ -64,7 +64,7 @@ struct FortunePickExampleView: View {
         .padding(.top, 20)
         .overlay(alignment: .top) {
           TooltipView(
-            type: .gradient,
+            type: .onboardingGradient,
             message: "Flip!"
           )
             .padding(.trailing, 10)

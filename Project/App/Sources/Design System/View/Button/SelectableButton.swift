@@ -94,7 +94,12 @@ extension SelectableButton {
     case `default`
     
     var foregroundColor: Color {
-      ColorResource.Text.Body.primary.color
+      switch self {
+      case .selected:
+        return ColorResource.Background.main.color
+      case .default:
+        return ColorResource.Text.Body.primary.color
+      }
     }
     
     var backgroundColor: Color {

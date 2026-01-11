@@ -15,8 +15,8 @@ struct FloatingButton: View {
   private var foregroundColor: Color {
     isEnabled ? Style.enable.foregroundColor : Style.disable.foregroundColor
   }
-  private var backgroundColor: Color {
-    isEnabled ? Style.enable.backgroundColor : Style.disable.backgroundColor
+  private var backgroundImage: Image {
+    isEnabled ? Style.enable.backgroundImage : Style.disable.backgroundImage
   }
 	
 	init(
@@ -36,23 +36,9 @@ struct FloatingButton: View {
 				Text(title)
 					.textStyle(.h5)
 					.foregroundStyle(foregroundColor)
-					.padding(.vertical, 13)
+          .padding(.bottom, 5)
 					.padding(.horizontal, 20)
-          .if(isEnabled) {
-            $0
-              .border(
-                LinearGradient.init(
-                  .buttonBorder01,
-                  startPoint: .leading,
-                  endPoint: .trailing
-                )
-              )
-              .radialGradientBackground(
-                type: .buttonSurface01
-              )
-          }
-          .background(backgroundColor)
-          .clipShape(Capsule())
+          .background(backgroundImage)
 			}
 		)
 	}
@@ -72,12 +58,12 @@ extension FloatingButton {
       }
     }
     
-    var backgroundColor: Color {
+    var backgroundImage: Image {
       switch self {
         case .enable:
-          return ColorResource.Violet._400.color
+          return ImageResource.FloatingButton.active.image
         case .disable:
-          return ColorResource.Neutral._500.color
+          return ImageResource.FloatingButton.deactive.image
       }
     }
   }
