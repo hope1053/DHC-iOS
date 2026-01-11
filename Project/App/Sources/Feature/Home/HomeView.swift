@@ -83,6 +83,16 @@ struct HomeView: View {
             action: \.missionList
           )
         )
+        
+        if store.testParticipation != nil {
+          IfLetStore(
+            store.scope(state: \.testParticipation, action: \.testParticipation)
+          ) { testParticipationStore in
+            TestParticipationView(store: testParticipationStore)
+              .padding(.horizontal, 20)
+              .padding(.vertical, 24)
+          }
+        }
       }
     }
     .scrollIndicators(.hidden)

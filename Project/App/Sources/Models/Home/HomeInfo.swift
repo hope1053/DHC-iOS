@@ -11,6 +11,7 @@ struct HomeInfo: Equatable {
   let longTermMission: Mission
   let dailyMissionList: [Mission]
   let dailyFortune: DailyFortune
+  let availableTest: Test
   var isTodayMissionDone: Bool
 }
 
@@ -34,6 +35,13 @@ extension HomeInfo {
     let cardImageURL: URL?
     let cardTitle: String
     let cardSubTitle: String
+  }
+  
+  struct Test: Equatable {
+    let title: String
+    let subTitle: String
+    let imageURL: URL?
+    let testURL: URL?
   }
 }
 
@@ -92,6 +100,12 @@ extension HomeInfo {
       cardImageURL: URL(string: "https://kr.object.ncloudstorage.com/dhc-object-storage/logos/mainCard/png/fourLeafClover.png"),
       cardTitle: "",
       cardSubTitle: ""
+    ),
+    availableTest: .init(
+      title: "궁합 테스트에 참여하고\n스페셜 미션 받아보세요",
+      subTitle: "지금까지 389명이 참여했어요!",
+      imageURL: URL(string: "https://kr.object.ncloudstorage.com/dhc-object-storage/logos/mainCard/png/fourLeafClover.png"),
+      testURL: nil
     ),
     isTodayMissionDone: false
   )

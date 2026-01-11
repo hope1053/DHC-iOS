@@ -82,6 +82,13 @@ extension HomeDTO {
         cardTitle: todayFortune.cardInfo.title,
         cardSubTitle: todayFortune.cardInfo.subTitle
       ),
+      // TODO: 추후 도메인으로 변경 로직구현
+      availableTest: .init(
+        title: "궁합 테스트에 참여하고\n스페셜 미션 받아보세요",
+        subTitle: "지금까지 389명이 참여했어요!",
+        imageURL: URL(string: "https://kr.object.ncloudstorage.com/dhc-object-storage/logos/mainCard/png/fourLeafClover.png"),
+        testURL: nil
+      ),
       isTodayMissionDone: isTodayMissionDone
     )
   }
