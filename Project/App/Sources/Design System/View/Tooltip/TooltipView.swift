@@ -74,7 +74,7 @@ struct TooltipView: View {
   private var textView: some View {
     Text(message)
       .textStyle(type.typography)
-      .foregroundStyle(ColorResource.Text.Highlights.primary.color)
+      .foregroundStyle(ColorResource.Background.main.color)
       .padding(.horizontal, 2)
   }
   
