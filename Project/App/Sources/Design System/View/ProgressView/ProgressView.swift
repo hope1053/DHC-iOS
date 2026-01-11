@@ -30,8 +30,8 @@ struct Milestone {
   }
 }
 
-// MARK: - ProgressView
-struct ProgressView: View {
+// MARK: - MilestoneProgressView
+struct MilestoneProgressView: View {
   private let totalSteps: Int
   private let currentLevel: Int
   private let milestones: [Milestone]

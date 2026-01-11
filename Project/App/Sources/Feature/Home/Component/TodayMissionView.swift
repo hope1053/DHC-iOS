@@ -98,7 +98,7 @@ struct MissionProgressView: View, Equatable {
   var body: some View {
     VStack(spacing: 16) {
       headerSection
-      ProgressView(
+      MilestoneProgressView(
         totalSteps: totalMissionCount,
         currentLevel: completedMissionCount,
         milestones: steps
