@@ -76,7 +76,9 @@ extension CheckMark {
     
     var foregroundColor: Color {
       switch self {
-        case .active, .enabled:
+        case .active:
+          ColorResource.Background.main.color
+        case .enabled:
           ColorResource.Text.main.color
         case .disabled:
           ColorResource.Neutral._400.color
