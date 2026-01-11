@@ -8,27 +8,48 @@
 import SwiftUI
 
 enum Tooltip {
-  case gradient
+  case onboardingGradient
+  case rewardGradient
   case solid
   
   var backgroundColor: AnyShapeStyle {
     switch self {
-    case .gradient:
+    case .onboardingGradient:
       return AnyShapeStyle(LinearGradient(.tooltip01))
+    case .rewardGradient:
+      return AnyShapeStyle(LinearGradient(.fortuneBorderLow).opacity(0.28))
     case .solid:
       return AnyShapeStyle(ColorResource.Neutral._500.color)
     }
   }
   
+  var foregroundColor: Color {
+    switch self {
+    case .onboardingGradient, .solid:
+      ColorResource.Background.main.color
+    case .rewardGradient:
+      ColorResource.Text.Highlights.primary.color
+    }
+  }
+  
   var bottomArrowBackgroundColor: AnyShapeStyle {
     switch self {
-    case .gradient:
+    case .onboardingGradient:
       return AnyShapeStyle(
         LinearGradient(
           .tooltip01,
           startPoint: .bottom,
           endPoint: .top
         )
+      )
+    case .rewardGradient:
+      return AnyShapeStyle(
+        LinearGradient(
+          .fortuneBorderLow,
+          startPoint: .bottom,
+          endPoint: .top
+        )
+        .opacity(0.28)
       )
     case .solid:
       return AnyShapeStyle(ColorResource.Neutral._500.color)
@@ -37,8 +58,10 @@ enum Tooltip {
   
   var typography: Typography.TypographyStyle {
     switch self {
-    case .gradient:
+    case .onboardingGradient:
       return Typography.Head.h7
+    case .rewardGradient:
+      return Typography.Body.body5
     case .solid:
       return Typography.Body.body5
     }
@@ -48,13 +71,16 @@ enum Tooltip {
 struct TooltipView: View {
   private let type: Tooltip
   private let message: String
+  private let expandWidth: Bool
   
   init(
     type: Tooltip,
-    message: String
+    message: String,
+    expandWidth: Bool = false
   ) {
     self.type = type
     self.message = message
+    self.expandWidth = expandWidth
   }
   
   var body: some View {
@@ -74,19 +100,16 @@ struct TooltipView: View {
   private var textView: some View {
     Text(message)
       .textStyle(type.typography)
-      .foregroundStyle(ColorResource.Background.main.color)
+      .foregroundStyle(type.foregroundColor)
+      .if(expandWidth) { view in
+        view.frame(maxWidth: .infinity)
+      }
       .padding(.horizontal, 2)
   }
   
   private var bottomArrowView: some View {
     BottomRoundedInvertedTriangle(cornerRadius: 1)
-      .fill(
-        LinearGradient(
-          .tooltip01,
-          startPoint: .bottom,
-          endPoint: .top
-        )
-      )
+      .fill(type.bottomArrowBackgroundColor)
       .frame(width: 12, height: 6)
   }
 }

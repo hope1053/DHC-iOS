@@ -21,14 +21,14 @@ struct RewardReducer {
     var currentLevel: Int = 1
     
     var levelInfo: [LevelInfo] = [
-      .init(level: 1, name: "Lv.1", threshold: 0),
-      .init(level: 2, name: "Lv.2", threshold: 100),
-      .init(level: 3, name: "Lv.3", threshold: 200),
-      .init(level: 4, name: "Lv.4", threshold: 300),
-      .init(level: 5, name: "Lv.5", threshold: 400),
-      .init(level: 6, name: "Lv.6", threshold: 500),
-      .init(level: 7, name: "Lv.7", threshold: 600),
-      .init(level: 8, name: "Lv.8", threshold: 700)
+      .init(level: 1, name: "새싹 복주머니", threshold: 0),
+      .init(level: 2, name: "새싹 복주머니", threshold: 100),
+      .init(level: 3, name: "새싹 복주머니", threshold: 200),
+      .init(level: 4, name: "새싹 복주머니", threshold: 300),
+      .init(level: 5, name: "새싹 복주머니", threshold: 400),
+      .init(level: 6, name: "새싹 복주머니", threshold: 500),
+      .init(level: 7, name: "새싹 복주머니", threshold: 600),
+      .init(level: 8, name: "새싹 복주머니", threshold: 700)
     ]
     
     var currentLevelInfo: LevelInfo {
