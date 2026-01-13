@@ -22,8 +22,7 @@ struct TestParticipationReducer {
     case delegate(Delegate)
     
     enum Delegate {
-      case dismiss
-      case participate
+      case participate(url: URL?)
     }
   }
   
@@ -31,10 +30,12 @@ struct TestParticipationReducer {
     Reduce { state, action in
       switch action {
       case .closeButtonTapped:
-        return .send(.delegate(.dismiss))
+        // TODO: 서버 호출
+        return .none
         
       case .participateButtonTapped:
-        return .send(.delegate(.participate))
+        // TODO: 서버 호출
+        return .send(.delegate(.participate(url: state.test.testURL)))
         
       case .delegate:
         return .none

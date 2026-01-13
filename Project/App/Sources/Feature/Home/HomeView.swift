@@ -38,6 +38,8 @@ struct HomeView: View {
       switch store.case {
       case .fortuneDetail(let store):
         FortuneDetailView(store: store)
+      case .webView(let store):
+        DHCWebView(store: store)
       }
     }
   }

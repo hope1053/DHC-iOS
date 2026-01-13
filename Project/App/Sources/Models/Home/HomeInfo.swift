@@ -11,7 +11,7 @@ struct HomeInfo: Equatable {
   let longTermMission: Mission
   let dailyMissionList: [Mission]
   let dailyFortune: DailyFortune
-  let availableTest: Test
+  let availableTest: Test?
   var isTodayMissionDone: Bool
 }
 

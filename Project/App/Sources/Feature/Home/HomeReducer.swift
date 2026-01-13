@@ -61,10 +61,11 @@ struct HomeReducer {
       self.homeInfo = homeInfo
       self.fortuneLoadingComplete = fortuneLoadingComplete
       self.isFirstLaunchOfToday = isFirstLaunchOfToday
-      // 나중에 실제 구현할 때는 init에서 self.testParticipation = nil로 변경하고, 특정 조건에서만 표시되도록 하면 됩니다!
-      self.testParticipation = TestParticipationReducer.State(
-        test: homeInfo.availableTest
-      )
+      if let test = homeInfo.availableTest {
+        self.testParticipation = TestParticipationReducer.State(test: test)
+      } else {
+        self.testParticipation = nil
+      }
     }
   }
 
@@ -88,7 +89,7 @@ struct HomeReducer {
     case startTimer
     case timerTicked(Int)
     
-    case presentTestParticipation(Bool)
+    case presentWebView(URL)
 
     // Internal Actions
     case fetchHomeData
@@ -111,6 +112,7 @@ struct HomeReducer {
   @Reducer
   enum Path {
     case fortuneDetail(FortuneDetailReducer)
+    case webView(DHCWebReducer)
   }
 
   var body: some ReducerOf<Self> {
@@ -204,11 +206,12 @@ struct HomeReducer {
       state.todaySavedMoney = todaySavedMoney
       return .none
       
-    case .presentTestParticipation(let isPresented):
-      return handlePresentTestParticipation(state: &state, isPresented: isPresented)
-      
     case .testParticipation(let action):
       return handleTestParticipationAction(action)
+      
+    case .presentWebView(let url):
+      state.path.append(.webView(DHCWebReducer.State(url: url)))
+      return .none
     }
   }
   
@@ -301,6 +304,14 @@ struct HomeReducer {
       return .none
     } else {
       state.homeInfo = homeInfo
+      
+      // 서버 데이터 기반: availableTest 업데이트
+      if let test = homeInfo.availableTest {
+        state.testParticipation = TestParticipationReducer.State(test: test)
+      } else {
+        state.testParticipation = nil
+      }
+      
       return .merge(
         .send(.missionList(.updateLongTermMission(homeInfo.longTermMission))),
         .send(.missionList(.updateDailyMissions(homeInfo.dailyMissionList))),
@@ -336,28 +347,25 @@ struct HomeReducer {
     case .element(id: let id, action: .fortuneDetail(.backButtonTapped)):
       state.path.pop(from: id)
       return .none
+    case .element(id: _, action: .webView(.delegate(.close))):
+      state.path.removeLast()
+      return .none
+    case .element(id: _, action: .webView(.delegate(.navigateToMain))):
+      state.path.removeLast()
+      return .none
     default:
       return .none
     }
   }
   
-  private func handlePresentTestParticipation(state: inout State, isPresented: Bool) -> Effect<Action> {
-    if isPresented {
-      state.testParticipation = TestParticipationReducer.State(test: state
-        .homeInfo.availableTest)
-    } else {
-      state.testParticipation = nil
-    }
-    return .none
-  }
-  
   private func handleTestParticipationAction(_ action: TestParticipationReducer.Action) -> Effect<Action> {
     switch action {
-    case .delegate(.dismiss):
-      return .send(.presentTestParticipation(false))
-    case .delegate(.participate):
-      // TODO: 테스트 참여 로직 구현
-      return .send(.presentTestParticipation(false))
+    case .delegate(.participate(let url)):
+      guard let url else {
+        return .none
+      }
+      
+      return .send(.presentWebView(url))
     default:
       return .none
     }
