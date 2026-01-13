@@ -59,6 +59,9 @@ struct MainTabReducer {
         case .delegate(.moveToReportTab):
           state.selectedTab = .report
           return .none
+        case .delegate(.moveToRewardTab):
+          state.selectedTab = .reward
+          return .none
         default:
           return .none
         }

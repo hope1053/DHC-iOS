@@ -106,6 +106,7 @@ struct HomeReducer {
     case delegate(Delegate)
     enum Delegate {
       case moveToReportTab
+      case moveToRewardTab
     }
   }
 
@@ -166,8 +167,7 @@ struct HomeReducer {
       return .none
       
     case .rewardButtonTapped:
-      // TODO
-      return .none
+      return .send(.delegate(.moveToRewardTab))
 
     case .popupConfirmButtonTapped:
       state.presentMissionDonePopup = false
