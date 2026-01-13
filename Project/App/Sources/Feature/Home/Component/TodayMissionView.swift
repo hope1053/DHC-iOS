@@ -182,7 +182,7 @@ struct TodayMissionTimerView: View, Equatable {
       
       Text("\(remainingSeconds.formattedTime) 남음")
         .textStyle(.h2_1)
-        .foregroundStyle(ColorResource.Text.main.color)
+        .foregroundStyle(remainingSeconds <= 14400 ? ColorResource.Red._100.color : ColorResource.Text.main.color)
     }
     .frame(alignment: .center)
     .monospacedDigit()

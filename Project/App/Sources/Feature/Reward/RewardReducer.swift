@@ -42,7 +42,7 @@ struct RewardReducer {
     
     // Route Action
     case path(StackActionOf<Path>)
-    case moveToRewardDetail
+    case moveToRewardDetail(type: RewardDetailType)
   }
   
   @Reducer
@@ -54,11 +54,10 @@ struct RewardReducer {
     Reduce { state, action in
       switch action {
       case .onOpenRewardButtonTapped:
-        return .send(.moveToRewardDetail)
+        return .send(.moveToRewardDetail(type: .detail(id: "")))
         
       case .onWhatIsRewardButtonTapped:
-        // TODO: 리워드는 뭔가요? > 버튼 액션 구현
-        return .none
+        return .send(.moveToRewardDetail(type: .sample))
         
       case .infoButtonTapped:
         // TODO: 정보 버튼 액션 구현
@@ -66,8 +65,8 @@ struct RewardReducer {
         
       case .onRewardItemTapped(let action):
         switch action {
-        case .moveToDetailView:
-          return .send(.moveToRewardDetail)
+        case .moveToDetailView(let id):
+          return .send(.moveToRewardDetail(type: .detail(id: id)))
         case .showToast(let toastMessage):
           state.toastType = .imageAndText(ImageResource.Icon.gift.image, toastMessage)
           state.isToastPresented = true
@@ -82,8 +81,8 @@ struct RewardReducer {
         state.toastType = toastType
         return .none
         
-      case .moveToRewardDetail:
-        state.path.append(.rewardDetail(RewardDetailReducer.State()))
+      case .moveToRewardDetail(let type):
+        state.path.append(.rewardDetail(RewardDetailReducer.State(type: type)))
         return .none
         
       case let .path(action):

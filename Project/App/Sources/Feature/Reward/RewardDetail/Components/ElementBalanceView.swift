@@ -19,10 +19,8 @@ struct ElementBalanceView: View {
           .textStyle(.h4_1)
           .foregroundStyle(ColorResource.Text.main.color)
         
-        // TODO: 특정 키워드 색상 변경 필요
-        Text(elementBalance.description.description)
+        Text(highlightedDescription)
           .textStyle(.body3)
-          .foregroundStyle(ColorResource.Neutral._300.color)
           .multilineTextAlignment(.center)
       }
       .padding(.top, 40)
@@ -31,6 +29,21 @@ struct ElementBalanceView: View {
       chart
     }
     .padding(.horizontal, 20)
+  }
+  
+  private var highlightedDescription: AttributedString {
+    let description = elementBalance.description.description
+    let highlight = elementBalance.description.highlight
+    let highlightColor = elementBalance.description.color
+    
+    var attributedString = AttributedString(description)
+    attributedString.foregroundColor = ColorResource.Neutral._300.color
+    
+    if let range = attributedString.range(of: highlight) {
+      attributedString[range].foregroundColor = highlightColor
+    }
+    
+    return attributedString
   }
   
   var chart: some View {
