@@ -27,37 +27,46 @@ struct RewardDetailView: View {
         }
       )
       
-      ScrollView {
-        VStack(spacing: 24) {
-          FortuneView(
-            title: store.scoreInfo.fortuneTitle,
-            score: store.scoreInfo.scoreString,
-            summary: store.scoreInfo.summary,
-            gradientType: FortuneScore(score: store.scoreInfo.score).textGradient,
-            cardView: {
-              FortuneCardFrontView(
-                backgroundImageURL: store.cardInfo.backgroundImageURL,
-                title: store.cardInfo.title,
-                fortune: store.cardInfo.fortune
-              )
-            }
-          )
-          .padding(.top, 32)
-          
-          overallFortuneView
-          
-          categoryFortuneView
-          
-          ElementBalanceView(elementBalance: store.elementBalance)
-          
-          elementReflectionView
-          
-          tipInfoView
-            .padding(.bottom, 53)
+      if let scoreInfo = store.scoreInfo,
+         let cardInfo = store.cardInfo,
+         let overallFortune = store.overallFortune,
+         let elementBalance = store.elementBalance,
+         let elementShift = store.elementShift {
+        ScrollView {
+          VStack(spacing: 24) {
+            FortuneView(
+              title: scoreInfo.fortuneTitle,
+              score: scoreInfo.scoreString,
+              summary: scoreInfo.summary,
+              gradientType: FortuneScore(score: scoreInfo.score).textGradient,
+              cardView: {
+                FortuneCardFrontView(
+                  backgroundImageURL: cardInfo.backgroundImageURL,
+                  title: cardInfo.title,
+                  fortune: cardInfo.fortune
+                )
+              }
+            )
+            .padding(.top, 32)
+            
+            overallFortuneView(overallFortune: overallFortune)
+            
+            categoryFortuneView
+            
+            ElementBalanceView(elementBalance: elementBalance)
+            
+            elementReflectionView(elementShift: elementShift)
+            
+            tipInfoView
+              .padding(.bottom, 53)
+          }
         }
+        .clipShape(Rectangle())
+        .scrollIndicators(.hidden)
+      } else {
+        ProgressView()
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
       }
-      .clipShape(Rectangle())
-      .scrollIndicators(.hidden)
     }
     .radialGradientBackground(
       type: .backgroundGradient02,
@@ -71,15 +80,15 @@ struct RewardDetailView: View {
     .navigationBarBackButtonHidden()
   }
   
-  var overallFortuneView: some View {
+  func overallFortuneView(overallFortune: RewardFortuneDetail.OverallFortune) -> some View {
     VStack(alignment: .leading, spacing: 16) {
       Text("전반적인 운세")
         .textStyle(.h4_1)
         .foregroundStyle(ColorResource.Text.main.color)
       
       MessageCardView(
-        title: store.overallFortune.title,
-        message: store.overallFortune.fortune
+        title: overallFortune.title,
+        message: overallFortune.fortune
       )
     }
     .padding(.horizontal, 20)
@@ -105,15 +114,15 @@ struct RewardDetailView: View {
     .padding(.horizontal, 20)
   }
   
-  var elementReflectionView: some View {
+  func elementReflectionView(elementShift: RewardFortuneDetail.ElementShift) -> some View {
     VStack(alignment: .leading, spacing: 16) {
       Text("올해의 기운 변화")
         .textStyle(.h5_1)
         .foregroundStyle(ColorResource.Text.main.color)
       
       MessageCardView(
-        title: store.elementShift.title,
-        message: store.elementShift.description
+        title: elementShift.title,
+        message: elementShift.description
       )
     }
     .padding(.horizontal, 20)
@@ -147,7 +156,7 @@ struct RewardDetailView: View {
 #Preview {
   RewardDetailView(
     store: Store(
-      initialState: .init(),
+      initialState: .init(type: .sample),
       reducer: RewardDetailReducer.init
     )
   )

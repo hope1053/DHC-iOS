@@ -9,25 +9,33 @@ import Foundation
 
 import ComposableArchitecture
 
+enum RewardDetailType: Equatable {
+  case sample
+  case detail(id: String)
+}
+
 @Reducer
 struct RewardDetailReducer {
   init() {}
+  
+  @Dependency(\.dateFormatterCache) var dateFormatterCache
 
   @ObservableState
   struct State: Equatable {
-    var rewardFortuneDetail: RewardFortuneDetail
+    let type: RewardDetailType
+    var rewardFortuneDetail: RewardFortuneDetail?
     
-    var title: String { rewardFortuneDetail.title }
-    var scoreInfo: RewardFortuneDetail.FortuneScore { rewardFortuneDetail.scoreInfo }
-    var cardInfo: RewardFortuneDetail.FortuneCard { rewardFortuneDetail.cardInfo }
-    var overallFortune: RewardFortuneDetail.OverallFortune { rewardFortuneDetail.overallFortune }
-    var categoryFortuneItems: [RewardFortuneDetail.CategoryFortuneItem] { rewardFortuneDetail.categoryFortuneItems }
-    var elementBalance: RewardFortuneDetail.ElementBalance { rewardFortuneDetail.elementBalance }
-    var elementShift: RewardFortuneDetail.ElementShift { rewardFortuneDetail.elementShift }
-    var tipInfos: [RewardFortuneDetail.Tip] { rewardFortuneDetail.tipInfos }
+    var title: String { rewardFortuneDetail?.title ?? "" }
+    var scoreInfo: RewardFortuneDetail.FortuneScore? { rewardFortuneDetail?.scoreInfo }
+    var cardInfo: RewardFortuneDetail.FortuneCard? { rewardFortuneDetail?.cardInfo }
+    var overallFortune: RewardFortuneDetail.OverallFortune? { rewardFortuneDetail?.overallFortune }
+    var categoryFortuneItems: [RewardFortuneDetail.CategoryFortuneItem] { rewardFortuneDetail?.categoryFortuneItems ?? [] }
+    var elementBalance: RewardFortuneDetail.ElementBalance? { rewardFortuneDetail?.elementBalance }
+    var elementShift: RewardFortuneDetail.ElementShift? { rewardFortuneDetail?.elementShift }
+    var tipInfos: [RewardFortuneDetail.Tip] { rewardFortuneDetail?.tipInfos ?? [] }
 
-    init(rewardFortuneDetail: RewardFortuneDetail = .sample) {
-      self.rewardFortuneDetail = rewardFortuneDetail
+    init(type: RewardDetailType) {
+      self.type = type
     }
   }
 
@@ -37,6 +45,9 @@ struct RewardDetailReducer {
     case onAppear
     
     // Internal Action
+    case fetchRewardDetail
+    case rewardDetailResponse(RewardFortuneDetail)
+    case rewardDetailError(Error)
     
     // Route Action
   }
@@ -48,6 +59,36 @@ struct RewardDetailReducer {
         return .none
         
       case .onAppear:
+        return .send(.fetchRewardDetail)
+        
+      case .fetchRewardDetail:
+        switch state.type {
+        case .detail(let id):
+          // TODO: API Client 구현 시 실제 네트워크 호출로 대체
+          // return .run { send in
+          //   do {
+          //     let rewardDetail = try await rewardAPIClient.fetchRewardDetail(id)
+          //     await send(.rewardDetailResponse(rewardDetail))
+          //   } catch {
+          //     await send(.rewardDetailError(error))
+          //   }
+          // }
+          
+          // 임시: 샘플 데이터 사용
+          state.rewardFortuneDetail = .sample(date: dateFormatterCache.formatter(for: "yyyy년 MM월 dd일").string(from: Date()))
+          return .none
+          
+        case .sample:
+          state.rewardFortuneDetail = .sample(date: dateFormatterCache.formatter(for: "yyyy년 MM월 dd일").string(from: Date()))
+          return .none
+        }
+        
+      case .rewardDetailResponse(let detail):
+        state.rewardFortuneDetail = detail
+        return .none
+        
+      case .rewardDetailError:
+        // TODO: 에러 핸들링 구현
         return .none
       }
     }
