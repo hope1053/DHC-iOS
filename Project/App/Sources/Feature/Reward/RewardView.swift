@@ -89,7 +89,7 @@ struct RewardView: View {
   var headerView: some View {
     HStack(spacing: 8) {
       BadgeView(
-        text: "Lv.\(store.rewardInfo.currentLevel)",
+        text: "Lv.\(store.rewardInfo.currentLevel.level)",
         textColor: ColorResource.Text.Body.primary.color,
         font: Typography.Head.h8
       )
