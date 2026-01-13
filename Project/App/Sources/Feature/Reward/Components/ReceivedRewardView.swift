@@ -7,11 +7,6 @@
 
 import SwiftUI
 
-enum ReceivedRewardAction {
-  case showToast(String)
-  case moveToDetailView(String)
-}
-
 struct ReceivedRewardView: View {
   private let rewards: [RewardItem]
   private let onRewardItemTapped: (ReceivedRewardAction) -> Void
