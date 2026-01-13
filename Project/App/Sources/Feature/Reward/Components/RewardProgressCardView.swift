@@ -10,7 +10,7 @@ import SwiftUI
 struct RewardProgressCardView: View {
   private let currentPoints: Int
   private let pointsToNextLevel: Int
-  private let currentLevel: Int
+  private let currentLevel: LevelInfo
   private let progress: Double
   private let levelInfo: [LevelInfo]
   private let onOpenRewardButtonTapped: () -> Void
@@ -19,7 +19,7 @@ struct RewardProgressCardView: View {
   init(
     currentPoints: Int,
     pointsToNextLevel: Int,
-    currentLevel: Int,
+    currentLevel: LevelInfo,
     progress: Double,
     levelInfo: [LevelInfo],
     onOpenRewardButtonTapped: @escaping () -> Void,
@@ -117,7 +117,7 @@ struct RewardProgressCardView: View {
       // ProgressView
       StepProgressView(
         milestones: milestones,
-        currentLevel: currentLevel
+        currentLevel: currentLevel.level
       )
     }
   }

@@ -12,6 +12,7 @@ struct MyPageDTO: Decodable {
   let birthDate: BirthDateInfo
   let birthTime: String?
   let preferredMissionCategoryList: [MissionCategoryInfo]
+  let fortuneTestList: [FortuneTestInfo]
 }
 
 extension MyPageDTO {
@@ -67,6 +68,20 @@ extension MyPageDTO {
 }
 
 extension MyPageDTO {
+  struct FortuneTestInfo: Decodable {
+    let imageURL: URL?
+    let displayName: String
+    let testURL: URL?
+    
+    enum CodingKeys: String, CodingKey {
+      case testURL
+      case displayName
+      case imageURL = "image"
+    }
+  }
+}
+
+extension MyPageDTO {
   func toDomain() -> MyPageInfo {
     MyPageInfo(
       animalCard: .init(
@@ -79,6 +94,9 @@ extension MyPageDTO {
       ),
       preferredMissionCategoryList: preferredMissionCategoryList.map {
         .init(displayName: $0.displayName, imageURL: $0.imageURL)
+      },
+      fortuneTestList: fortuneTestList.map {
+        .init(imageURL: $0.imageURL, displayName: $0.displayName, testURL: $0.testURL)
       }
     )
   }

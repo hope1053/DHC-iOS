@@ -11,6 +11,7 @@ struct MyPageInfo: Equatable {
   let animalCard: AnimalCardInfo
   var birthDate: BirthDateInfo
   let preferredMissionCategoryList: [MissionCategoryInfo]
+  let fortuneTestList: [FortuneTestInfo]
 }
 
 extension MyPageInfo {
@@ -35,6 +36,14 @@ extension MyPageInfo {
 }
 
 extension MyPageInfo {
+  struct FortuneTestInfo: Hashable {
+    let imageURL: URL?
+    let displayName: String
+    let testURL: URL?
+  }
+}
+
+extension MyPageInfo {
   static let sample = MyPageInfo(
     animalCard: .init(
       name: "가을의 흰말",
@@ -45,6 +54,13 @@ extension MyPageInfo {
       .init(displayName: "식음료", imageURL: nil),
       .init(displayName: "디지털·구독", imageURL: nil),
       .init(displayName: "사교·모임", imageURL: nil),
+    ],
+    fortuneTestList: [
+      .init(
+        imageURL: nil,
+        displayName: "내 썸녀와 잘될 수 있을까?",
+        testURL: nil
+      )
     ]
   )
 }

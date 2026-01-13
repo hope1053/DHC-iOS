@@ -19,6 +19,10 @@ struct MyPageReducer {
     var myPageInfo: MyPageInfo
     var isLoading = false
     var isRedacted = false
+    
+    var fortuneTestList: [MyPageInfo.FortuneTestInfo] {
+      myPageInfo.fortuneTestList
+    }
     @Presents var appResetAlert: AppResetAlertReducer.State?
   }
 
@@ -26,6 +30,7 @@ struct MyPageReducer {
     // View Actions
     case onAppear
     case resetAppButtonTapped
+    case fortuneTestRowTapped(url: URL?)
 
     // Internal Actions
     case fetchMyPageData
@@ -49,6 +54,13 @@ struct MyPageReducer {
         }
 
         return .send(.fetchMyPageData)
+        
+      case .resetAppButtonTapped:
+        state.appResetAlert = .init()
+        return .none
+        
+      case .fortuneTestRowTapped(let url):
+        return .none
 
       case .fetchMyPageData:
         state.isLoading = true
@@ -71,10 +83,6 @@ struct MyPageReducer {
 
       case .myPageDataFailed:
         state.isLoading = false
-        return .none
-
-      case .resetAppButtonTapped:
-        state.appResetAlert = .init()
         return .none
 
       case .appResetAlert(.presented(.delegate(.cancel))):

@@ -33,11 +33,11 @@ struct RewardView: View {
             VStack(spacing: 8) {
               // 메인 리워드 카드
               RewardProgressCardView(
-                currentPoints: store.currentPoints,
-                pointsToNextLevel: store.pointsToNextLevel,
-                currentLevel: store.currentLevel,
-                progress: store.progress,
-                levelInfo: store.levelInfo,
+                currentPoints: store.rewardInfo.currentPoints,
+                pointsToNextLevel: store.rewardInfo.pointsToNextLevel,
+                currentLevel: store.rewardInfo.currentLevel,
+                progress: store.rewardInfo.progress,
+                levelInfo: store.rewardInfo.levelInfo,
                 onOpenRewardButtonTapped: {
                   store.send(.onOpenRewardButtonTapped)
                 },
@@ -47,7 +47,7 @@ struct RewardView: View {
               )
               
               ReceivedRewardView(
-                rewards: store.receivedRewards,
+                rewards: store.rewardInfo.receivedRewards,
                 onRewardItemTapped: { action in
                   store.send(.onRewardItemTapped(action: action))
                 }
@@ -89,12 +89,12 @@ struct RewardView: View {
   var headerView: some View {
     HStack(spacing: 8) {
       BadgeView(
-        text: "Lv.\(store.currentLevel)",
+        text: "Lv.\(store.rewardInfo.currentLevel.level)",
         textColor: ColorResource.Text.Body.primary.color,
         font: Typography.Head.h8
       )
       
-      Text(store.currentLevelInfo.name)
+      Text(store.rewardInfo.currentLevelInfo.name)
         .textStyle(.h1)
         .foregroundStyle(LinearGradient(.text02))
       
