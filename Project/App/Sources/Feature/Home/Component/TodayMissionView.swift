@@ -137,6 +137,8 @@ struct MissionProgressView: View, Equatable {
           .foregroundStyle(ColorResource.Neutral._500.color)
           .overlay {
             ImageResource.fireworks.image
+              .resizable()
+              .frame(width: 24, height: 24)
           }
         
         VStack(alignment: .leading, spacing: 4) {

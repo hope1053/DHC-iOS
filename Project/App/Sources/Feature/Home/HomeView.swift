@@ -149,18 +149,19 @@ struct HomeView: View {
         )
       )
     }
-    .overlay {
-      if store.presentMissionDonePopup {
-        ColorResource._0_F_1114.color
-          .ignoresSafeArea()
-
-        HomePopup(todaySavedAmount: store.todaySavedMoney) {
-          store.send(.popupConfirmButtonTapped)
-        } onDismiss: {
+    .popup(isPresented: $store.presentMissionDonePopup) {
+      MissionResultView(
+        type: store.popupType,
+        onFirstButtonTapped: {
+          store.send(.popupFirstButtonTapped)
+        },
+        onSecondButtonTapped: {
+          store.send(.popupSecondButtonTapped)
+        },
+        onCloseButtonTapped: {
           store.send(.popupDismissButtonTapped)
         }
-        .padding(.horizontal, 28)
-      }
+      )
     }
   }
 
