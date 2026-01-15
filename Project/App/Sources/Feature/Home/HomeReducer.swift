@@ -36,7 +36,8 @@ struct HomeReducer {
     )
     var homeInfo: HomeInfo
     var presentBottomSheet = false
-    var presentMissionDonePopup = false
+    var presentMissionDonePopup = true
+    var popupType: MissionResult = .todayFail
     var presentToast = false
     var testParticipation: TestParticipationReducer.State?
 
@@ -80,7 +81,8 @@ struct HomeReducer {
     case cancelTodayMissionDoneButtonTapped
     case rewardButtonTapped
 
-    case popupConfirmButtonTapped
+    case popupFirstButtonTapped
+    case popupSecondButtonTapped
     case popupDismissButtonTapped
 
     case presentToast(String)
@@ -169,10 +171,28 @@ struct HomeReducer {
     case .rewardButtonTapped:
       return .send(.delegate(.moveToRewardTab))
 
-    case .popupConfirmButtonTapped:
-      state.presentMissionDonePopup = false
-      return .send(.delegate(.moveToReportTab))
-
+      // MARK: - 팝업
+    case .popupFirstButtonTapped:
+      switch state.popupType {
+      case .todaySuccess:
+        state.presentMissionDonePopup = false
+        return .send(.delegate(.moveToRewardTab))
+      case .todayFail:
+        state.presentMissionDonePopup = false
+        return .none
+      default:
+        return .none
+      }
+      
+    case .popupSecondButtonTapped:
+      switch state.popupType {
+      case .todaySuccess:
+        state.presentMissionDonePopup = false
+        return .none
+      default:
+        return .none
+      }
+      
     case .popupDismissButtonTapped:
       state.presentMissionDonePopup = false
       return .none
