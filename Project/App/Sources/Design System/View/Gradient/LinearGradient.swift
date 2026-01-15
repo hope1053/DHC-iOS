@@ -8,7 +8,7 @@
 import SwiftUI
 
 extension LinearGradient {
-  enum LinearType {
+  enum LinearType: Codable, Hashable {
     case tooltip01
     case text01
     case text02
