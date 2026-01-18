@@ -14,6 +14,21 @@ enum MissionResult: Equatable {
   case yesterDayFail
   case fewDaysFail
   
+  init?(from pastMissionStatus: HomeInfo.PastMissionStatus?) {
+    guard let pastMissionStatus else {
+      return nil
+    }
+    
+    switch pastMissionStatus {
+    case .yesterDayMissionSuccess(let earnedPoint):
+      self = .yesterDaySuccess(earnedPoint: earnedPoint)
+    case .yesterDayMissionFail:
+      self = .yesterDayFail
+    case .longAbsence:
+      self = .fewDaysFail
+    }
+  }
+  
   var badgeTitle: String {
     switch self {
     case .todaySuccess, .yesterDaySuccess:

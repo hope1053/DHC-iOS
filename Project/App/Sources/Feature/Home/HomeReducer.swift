@@ -36,7 +36,7 @@ struct HomeReducer {
     )
     var homeInfo: HomeInfo
     var presentBottomSheet = false
-    var presentMissionDonePopup = true
+    var presentMissionDonePopup = false
     var popupType: MissionResult = .todayFail
     var presentToast = false
     var testParticipation: TestParticipationReducer.State?
@@ -313,9 +313,12 @@ struct HomeReducer {
         title: dailyFortune.cardTitle,
         fortune: dailyFortune.cardSubTitle
       )
+      let missionResult = MissionResult(from: homeInfo.pastMissionStatus)
+      
       state.fortuneLoadingComplete = .init(
         scoreInfo: scoreInfo,
-        cardInfo: cardInfo
+        cardInfo: cardInfo,
+        missionResult: missionResult
       )
 
       withAnimation(.easeInOut(duration: 0.5)) {
@@ -357,6 +360,12 @@ struct HomeReducer {
         state.viewState = .home
       }
       return .none
+    case .delegate(.moveToReward):
+      state.isFirstLaunchOfToday.toggle()
+      withAnimation(.easeInOut(duration: 0.5)) {
+        state.viewState = .home
+      }
+      return .send(.delegate(.moveToRewardTab))
     default:
       return .none
     }
