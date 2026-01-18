@@ -11,7 +11,7 @@ import ComposableArchitecture
 
 enum ReceivedRewardAction {
   case showToast(String)
-  case moveToDetailView(String)
+  case moveToDetailView(Int)
 }
 
 @Reducer
@@ -58,7 +58,7 @@ struct RewardReducer {
     Reduce { state, action in
       switch action {
       case .onOpenRewardButtonTapped:
-        return .send(.moveToRewardDetail(type: .detail(id: "")))
+        return .send(.moveToRewardDetail(type: .detail(id: 0)))
         
       case .onWhatIsRewardButtonTapped:
         return .send(.moveToRewardDetail(type: .sample))
