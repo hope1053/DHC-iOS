@@ -37,7 +37,7 @@ struct HomeReducer {
     var homeInfo: HomeInfo
     var presentBottomSheet = false
     var presentMissionDonePopup = false
-    var popupType: MissionResult = .todayFail
+    var popupType: MissionResult?
     var presentToast = false
     var testParticipation: TestParticipationReducer.State?
 
@@ -173,7 +173,11 @@ struct HomeReducer {
 
       // MARK: - 팝업
     case .popupFirstButtonTapped:
-      switch state.popupType {
+      guard let popupType = state.popupType else {
+        return .none
+      }
+      
+      switch popupType {
       case .todaySuccess:
         state.presentMissionDonePopup = false
         return .send(.delegate(.moveToRewardTab))
@@ -185,7 +189,11 @@ struct HomeReducer {
       }
       
     case .popupSecondButtonTapped:
-      switch state.popupType {
+      guard let popupType = state.popupType else {
+        return .none
+      }
+      
+      switch popupType {
       case .todaySuccess:
         state.presentMissionDonePopup = false
         return .none
@@ -224,6 +232,8 @@ struct HomeReducer {
 
     case .todayMissionDoneResponse(let todaySavedMoney):
       state.todaySavedMoney = todaySavedMoney
+      
+      // TODO: response 변경 시 state.popupType 수정 필요
       return .none
       
     case .testParticipation(let action):
@@ -327,6 +337,9 @@ struct HomeReducer {
       return .none
     } else {
       state.homeInfo = homeInfo
+      
+      // pastMissionStatus를 MissionResult로 변환
+      state.popupType = MissionResult(from: homeInfo.pastMissionStatus)
       
       // 서버 데이터 기반: availableTest 업데이트
       if let test = homeInfo.availableTest {
