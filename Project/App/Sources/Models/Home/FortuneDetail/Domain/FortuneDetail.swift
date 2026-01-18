@@ -39,7 +39,7 @@ extension FortuneDetail {
       scoreInfo: .init(
         date: date,
         scoreString: "85점",
-        score: 85,
+        score: 70, // 색상 고정을 위해 예시 데이터에서만 점수 다르게 설정
         summary: "마음이 들뜨는 날이에요,\n한템포 쉬어가요."
       ),
       cardInfo: .init(

@@ -10,16 +10,16 @@ import Foundation
 struct LevelInfo: Equatable {
   let level: Int
   let name: String
-  let threshold: Int
+  let imageURL: URL?
   
   init(
     level: Int,
     name: String,
-    threshold: Int
+    imageURL: URL?
   ) {
     self.level = level
     self.name = name
-    self.threshold = threshold
+    self.imageURL = imageURL
   }
 }
 

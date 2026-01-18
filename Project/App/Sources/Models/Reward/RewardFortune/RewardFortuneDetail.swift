@@ -123,7 +123,7 @@ extension RewardFortuneDetail {
         summary: "올 한해는 전반적으로 마음이 들뜨는 날이에요,\n한템포 쉬어가요."
       ),
       cardInfo: .init(
-        backgroundImageURL: URL.urlForResource(.fortuneCardSample),
+        backgroundImageURL: URL.urlForResource(.fortuneCardFrontDefaultView),
         title: "최고의 날",
         fortune: "네잎클로버"
       ),

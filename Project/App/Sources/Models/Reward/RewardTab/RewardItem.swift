@@ -8,13 +8,13 @@
 import Foundation
 
 struct RewardItem: Identifiable, Equatable {
-  let id: String
+  let id: Int
   let title: String
   let iconURL: URL?
   let message: String?
   
   init(
-    id: String = UUID().uuidString, // TODO: default value 추후 삭제
+    id: Int,
     title: String,
     iconURL: URL?,
     message: String?

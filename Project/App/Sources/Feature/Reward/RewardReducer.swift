@@ -11,7 +11,7 @@ import ComposableArchitecture
 
 enum ReceivedRewardAction {
   case showToast(String)
-  case moveToDetailView(String)
+  case moveToDetailView(Int)
 }
 
 @Reducer
@@ -24,6 +24,10 @@ struct RewardReducer {
     var rewardInfo: RewardInfo = .initial
     var toastType: ToastType = .textWithCheck("")
     var isToastPresented: Bool = false
+    
+    var userProgressInfo: RewardInfo.UserProgressInfo {
+      rewardInfo.userProgressInfo
+    }
 
     init() {
     }
@@ -54,7 +58,7 @@ struct RewardReducer {
     Reduce { state, action in
       switch action {
       case .onOpenRewardButtonTapped:
-        return .send(.moveToRewardDetail(type: .detail(id: "")))
+        return .send(.moveToRewardDetail(type: .detail(id: 0)))
         
       case .onWhatIsRewardButtonTapped:
         return .send(.moveToRewardDetail(type: .sample))

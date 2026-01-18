@@ -11,7 +11,7 @@ import ComposableArchitecture
 
 enum RewardDetailType: Equatable {
   case sample
-  case detail(id: String)
+  case detail(id: Int)
 }
 
 @Reducer

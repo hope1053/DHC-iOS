@@ -11,8 +11,7 @@ struct RewardProgressCardView: View {
   private let currentPoints: Int
   private let pointsToNextLevel: Int
   private let currentLevel: LevelInfo
-  private let progress: Double
-  private let levelInfo: [LevelInfo]
+  private let totalSteps: Int
   private let onOpenRewardButtonTapped: () -> Void
   private let onWhatIsRewardButtonTapped: () -> Void
   
@@ -20,31 +19,24 @@ struct RewardProgressCardView: View {
     currentPoints: Int,
     pointsToNextLevel: Int,
     currentLevel: LevelInfo,
-    progress: Double,
-    levelInfo: [LevelInfo],
+    totalSteps: Int,
     onOpenRewardButtonTapped: @escaping () -> Void,
     onWhatIsRewardButtonTapped: @escaping () -> Void
   ) {
     self.currentPoints = currentPoints
     self.pointsToNextLevel = pointsToNextLevel
     self.currentLevel = currentLevel
-    self.progress = progress
-    self.levelInfo = levelInfo
+    self.totalSteps = totalSteps
     self.onOpenRewardButtonTapped = onOpenRewardButtonTapped
     self.onWhatIsRewardButtonTapped = onWhatIsRewardButtonTapped
   }
   
-  private var totalSteps: Int {
-    // levelInfo에서 -1이 아닌 가장 큰 level 찾기
-    levelInfo.filter { $0.level != -1 }.map { $0.level }.max() ?? 10
-  }
-  
   private var milestones: [Milestone] {
-    levelInfo.map { info in
+    (1...totalSteps).map { level in
       Milestone(
-        level: info.level,
-        title: "\(info.level)",
-        type: info.level == 8 ? .image(ImageResource.Icon.gift.image) : .dot
+        level: level,
+        title: "\(level)",
+        type: level == totalSteps ? .image(ImageResource.Icon.gift.image) : .dot
       )
     }
   }
