@@ -24,6 +24,10 @@ struct RewardReducer {
     var rewardInfo: RewardInfo = .initial
     var toastType: ToastType = .textWithCheck("")
     var isToastPresented: Bool = false
+    
+    var userProgressInfo: RewardInfo.UserProgressInfo {
+      rewardInfo.userProgressInfo
+    }
 
     init() {
     }
