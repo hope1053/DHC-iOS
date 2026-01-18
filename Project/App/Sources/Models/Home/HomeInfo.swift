@@ -13,6 +13,7 @@ struct HomeInfo: Equatable {
   let dailyFortune: DailyFortune
   let availableTest: Test?
   var isTodayMissionDone: Bool
+  let pastMissionStatus: PastMissionStatus?
 }
 
 extension HomeInfo {
@@ -42,6 +43,29 @@ extension HomeInfo {
     let subTitle: String
     let imageURL: URL?
     let testURL: URL?
+  }
+  
+  enum PastMissionStatus: Equatable {
+    case yesterDayMissionSuccess(earnedPoint: Int)
+    case yesterDayMissionFail
+    case longAbsence
+    
+    init?(
+      didYesterDayMissionSuccess: Bool,
+      isLongAbsence: Bool,
+      isFirstAccessForAllTime: Bool,
+      earnedPoint: Int?
+    ) {
+      if isFirstAccessForAllTime {
+        return nil
+      } else if isLongAbsence {
+        self = .longAbsence
+      } else if didYesterDayMissionSuccess {
+        self = .yesterDayMissionSuccess(earnedPoint: earnedPoint ?? 0)
+      } else {
+        self = .yesterDayMissionFail
+      }
+    }
   }
 }
 
@@ -107,7 +131,8 @@ extension HomeInfo {
       imageURL: URL(string: "https://kr.object.ncloudstorage.com/dhc-object-storage/logos/mainCard/png/fourLeafClover.png"),
       testURL: nil
     ),
-    isTodayMissionDone: false
+    isTodayMissionDone: false,
+    pastMissionStatus: nil
   )
 }
 
