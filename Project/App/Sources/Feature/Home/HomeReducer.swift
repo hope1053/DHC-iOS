@@ -43,7 +43,6 @@ struct HomeReducer {
 
     var fortuneLoadingComplete: FortuneLoadingCompleteReducer.State?
     var isFirstLaunchOfToday: Bool
-    var todaySavedMoney: String?
     var toastMessage = ""
     var remainingSeconds: Int = 0
     var completedMissionCount: Int {
@@ -97,7 +96,7 @@ struct HomeReducer {
     case fetchHomeData
     case homeDataResponse(HomeInfo)
     case homeDataFailed(Error)
-    case todayMissionDoneResponse(String)
+    case todayMissionDoneResponse(TodayMissionStatus)
     case missionList(MissionListReducer.Action)
     case fortuneLoadingComplete(FortuneLoadingCompleteReducer.Action)
     case testParticipation(TestParticipationReducer.Action)
@@ -230,10 +229,14 @@ struct HomeReducer {
     case .delegate:
       return .none
 
-    case .todayMissionDoneResponse(let todaySavedMoney):
-      state.todaySavedMoney = todaySavedMoney
+    case .todayMissionDoneResponse(let todayMissionStatus):
+      if todayMissionStatus.isMissionSuccess {
+        state.popupType = .todaySuccess(earnedPoint: todayMissionStatus.earnedPoint)
+      } else {
+        state.popupType = .todayFail
+      }
       
-      // TODO: response 변경 시 state.popupType 수정 필요
+      state.presentMissionDonePopup = true
       return .none
       
     case .testParticipation(let action):
@@ -281,14 +284,13 @@ struct HomeReducer {
   
   private func handleConfirmTodayMissionDone(state: inout State) -> Effect<Action> {
     state.presentBottomSheet = false
-    state.presentMissionDonePopup = true
 
     let todayDate = formattedTodayDate()
 
     return .run { [homeAPIClient] send in
       do {
-        let todaySavedMoney = try await homeAPIClient.todayMissionDone(todayDate)
-        await send(.todayMissionDoneResponse(todaySavedMoney))
+        let todayMissionStatus = try await homeAPIClient.todayMissionDone(todayDate)
+        await send(.todayMissionDoneResponse(todayMissionStatus))
         await send(.fetchHomeData)
       } catch {
         #if DEBUG
@@ -339,7 +341,15 @@ struct HomeReducer {
       state.homeInfo = homeInfo
       
       // pastMissionStatus를 MissionResult로 변환
-      state.popupType = MissionResult(from: homeInfo.pastMissionStatus)
+      // 단, 이미 today 관련 popupType이 설정되어 있으면 덮어쓰지 않음
+      if case .todaySuccess = state.popupType {
+        // todayMissionDone 직후 fetchHomeData가 호출된 경우, today 상태 유지
+      } else if case .todayFail = state.popupType {
+        // todayMissionDone 직후 fetchHomeData가 호출된 경우, today 상태 유지
+      } else {
+        // 일반적인 경우, 서버의 pastMissionStatus로 업데이트
+        state.popupType = MissionResult(from: homeInfo.pastMissionStatus)
+      }
       
       // 서버 데이터 기반: availableTest 업데이트
       if let test = homeInfo.availableTest {
