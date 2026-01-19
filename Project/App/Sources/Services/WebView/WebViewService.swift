@@ -16,6 +16,7 @@ struct WebViewService {
   var setupMessageHandler: @Sendable (_ handler: @escaping (WebViewMessage) -> Void) async -> Void
   var evaluateJavaScript: @Sendable (_ script: String) async throws -> Any?
   var getConfiguration: @Sendable () -> WKWebViewConfiguration = { WKWebViewConfiguration() }
+  var setCookie: @Sendable (_ name: String, _ value: String, _ domain: String) async -> Void
 }
 
 extension WebViewService: TestDependencyKey {
@@ -44,6 +45,9 @@ extension WebViewService: DependencyKey {
     },
     getConfiguration: {
       WebViewCoordinator.shared.getConfiguration()
+    },
+    setCookie: { name, value, domain in
+      await WebViewCoordinator.shared.setCookie(name: name, value: value, domain: domain)
     }
   )
 }
@@ -98,6 +102,21 @@ final class WebViewCoordinator: NSObject {
       throw WebViewError.webViewNotInitialized
     }
     return try await webView.evaluateJavaScript(script)
+  }
+  
+  func setCookie(name: String, value: String, domain: String) async {
+    let cookie = HTTPCookie(properties: [
+      .domain: domain,
+      .path: "/",
+      .name: name,
+      .value: value,
+      .secure: true,
+      .expires: Date().addingTimeInterval(31536000)
+    ])
+    
+    if let cookie {
+      await configuration.websiteDataStore.httpCookieStore.setCookie(cookie)
+    }
   }
   
   private func handleMessage(_ message: WebViewMessage) {
