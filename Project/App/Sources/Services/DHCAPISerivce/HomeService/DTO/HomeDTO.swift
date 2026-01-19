@@ -15,6 +15,7 @@ struct HomeDTO: Decodable {
   let didYesterDayMissionSuccess: Bool
   let isLongAbsence: Bool
   let isFirstAccessForAllTime: Bool // 해당 계정 생성 후 첫 접속
+  let pastEarnedPoint: Int
 
   enum CodingKeys: String, CodingKey {
     case longTermMission
@@ -24,6 +25,7 @@ struct HomeDTO: Decodable {
     case didYesterDayMissionSuccess = "yesterdayMissionSuccess"
     case isLongAbsence = "longAbsence"
     case isFirstAccessForAllTime = "isFirstAccess"
+    case pastEarnedPoint = "point"
   }
 }
 
@@ -100,7 +102,7 @@ extension HomeDTO {
         didYesterDayMissionSuccess: didYesterDayMissionSuccess,
         isLongAbsence: isLongAbsence,
         isFirstAccessForAllTime: isFirstAccessForAllTime,
-        earnedPoint: 350 // TODO: 추후 프로퍼티 추가 시 변경 필요
+        earnedPoint: pastEarnedPoint
       )
     )
   }
