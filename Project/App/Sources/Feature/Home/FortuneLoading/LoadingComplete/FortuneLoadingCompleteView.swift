@@ -10,7 +10,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct FortuneLoadingCompleteView: View {
-  let store: StoreOf<FortuneLoadingCompleteReducer>
+  @Bindable var store: StoreOf<FortuneLoadingCompleteReducer>
   
   init(store: StoreOf<FortuneLoadingCompleteReducer>) {
     self.store = store
@@ -31,6 +31,22 @@ struct FortuneLoadingCompleteView: View {
       scaleEffectX: 1.8
     )
     .background(ColorResource.Background.main.color)
+    .popup(isPresented: $store.presentMissionResultPopup) {
+      if let missionResult = store.missionResult {
+        MissionResultView(
+          type: missionResult,
+          onFirstButtonTapped: {
+            store.send(.popupFirstButtonTapped)
+          },
+          onSecondButtonTapped: {
+            store.send(.popupSecondButtonTapped)
+          },
+          onCloseButtonTapped: {
+            store.send(.popupDismissButtonTapped)
+          }
+        )
+      }
+    }
   }
   
   var defaultView: some View {

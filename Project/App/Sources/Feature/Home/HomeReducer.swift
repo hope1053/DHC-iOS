@@ -36,14 +36,13 @@ struct HomeReducer {
     )
     var homeInfo: HomeInfo
     var presentBottomSheet = false
-    var presentMissionDonePopup = true
-    var popupType: MissionResult = .todayFail
+    var presentMissionDonePopup = false
+    var popupType: MissionResult?
     var presentToast = false
     var testParticipation: TestParticipationReducer.State?
 
     var fortuneLoadingComplete: FortuneLoadingCompleteReducer.State?
     var isFirstLaunchOfToday: Bool
-    var todaySavedMoney: String?
     var toastMessage = ""
     var remainingSeconds: Int = 0
     var completedMissionCount: Int {
@@ -97,7 +96,7 @@ struct HomeReducer {
     case fetchHomeData
     case homeDataResponse(HomeInfo)
     case homeDataFailed(Error)
-    case todayMissionDoneResponse(String)
+    case todayMissionDoneResponse(TodayMissionStatus)
     case missionList(MissionListReducer.Action)
     case fortuneLoadingComplete(FortuneLoadingCompleteReducer.Action)
     case testParticipation(TestParticipationReducer.Action)
@@ -173,7 +172,11 @@ struct HomeReducer {
 
       // MARK: - 팝업
     case .popupFirstButtonTapped:
-      switch state.popupType {
+      guard let popupType = state.popupType else {
+        return .none
+      }
+      
+      switch popupType {
       case .todaySuccess:
         state.presentMissionDonePopup = false
         return .send(.delegate(.moveToRewardTab))
@@ -185,7 +188,11 @@ struct HomeReducer {
       }
       
     case .popupSecondButtonTapped:
-      switch state.popupType {
+      guard let popupType = state.popupType else {
+        return .none
+      }
+      
+      switch popupType {
       case .todaySuccess:
         state.presentMissionDonePopup = false
         return .none
@@ -222,8 +229,14 @@ struct HomeReducer {
     case .delegate:
       return .none
 
-    case .todayMissionDoneResponse(let todaySavedMoney):
-      state.todaySavedMoney = todaySavedMoney
+    case .todayMissionDoneResponse(let todayMissionStatus):
+      if todayMissionStatus.isMissionSuccess {
+        state.popupType = .todaySuccess(earnedPoint: todayMissionStatus.earnedPoint)
+      } else {
+        state.popupType = .todayFail
+      }
+      
+      state.presentMissionDonePopup = true
       return .none
       
     case .testParticipation(let action):
@@ -271,14 +284,13 @@ struct HomeReducer {
   
   private func handleConfirmTodayMissionDone(state: inout State) -> Effect<Action> {
     state.presentBottomSheet = false
-    state.presentMissionDonePopup = true
 
     let todayDate = formattedTodayDate()
 
     return .run { [homeAPIClient] send in
       do {
-        let todaySavedMoney = try await homeAPIClient.todayMissionDone(todayDate)
-        await send(.todayMissionDoneResponse(todaySavedMoney))
+        let todayMissionStatus = try await homeAPIClient.todayMissionDone(todayDate)
+        await send(.todayMissionDoneResponse(todayMissionStatus))
         await send(.fetchHomeData)
       } catch {
         #if DEBUG
@@ -313,9 +325,12 @@ struct HomeReducer {
         title: dailyFortune.cardTitle,
         fortune: dailyFortune.cardSubTitle
       )
+      let missionResult = MissionResult(from: homeInfo.pastMissionStatus)
+      
       state.fortuneLoadingComplete = .init(
         scoreInfo: scoreInfo,
-        cardInfo: cardInfo
+        cardInfo: cardInfo,
+        missionResult: missionResult
       )
 
       withAnimation(.easeInOut(duration: 0.5)) {
@@ -324,6 +339,17 @@ struct HomeReducer {
       return .none
     } else {
       state.homeInfo = homeInfo
+      
+      // pastMissionStatus를 MissionResult로 변환
+      // 단, 이미 today 관련 popupType이 설정되어 있으면 덮어쓰지 않음
+      if case .todaySuccess = state.popupType {
+        // todayMissionDone 직후 fetchHomeData가 호출된 경우, today 상태 유지
+      } else if case .todayFail = state.popupType {
+        // todayMissionDone 직후 fetchHomeData가 호출된 경우, today 상태 유지
+      } else {
+        // 일반적인 경우, 서버의 pastMissionStatus로 업데이트
+        state.popupType = MissionResult(from: homeInfo.pastMissionStatus)
+      }
       
       // 서버 데이터 기반: availableTest 업데이트
       if let test = homeInfo.availableTest {
@@ -357,6 +383,12 @@ struct HomeReducer {
         state.viewState = .home
       }
       return .none
+    case .delegate(.moveToReward):
+      state.isFirstLaunchOfToday.toggle()
+      withAnimation(.easeInOut(duration: 0.5)) {
+        state.viewState = .home
+      }
+      return .send(.delegate(.moveToRewardTab))
     default:
       return .none
     }

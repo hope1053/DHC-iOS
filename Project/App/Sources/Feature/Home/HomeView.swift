@@ -67,6 +67,7 @@ struct HomeView: View {
         TodayMissionView(
           remainingSeconds: store.remainingSeconds,
           completedMissionCount: store.completedMissionCount,
+          missionResult: store.popupType,
           didTapRewardButton: {
             store.send(.rewardButtonTapped)
           },
@@ -150,18 +151,20 @@ struct HomeView: View {
       )
     }
     .popup(isPresented: $store.presentMissionDonePopup) {
-      MissionResultView(
-        type: store.popupType,
-        onFirstButtonTapped: {
-          store.send(.popupFirstButtonTapped)
-        },
-        onSecondButtonTapped: {
-          store.send(.popupSecondButtonTapped)
-        },
-        onCloseButtonTapped: {
-          store.send(.popupDismissButtonTapped)
-        }
-      )
+      if let popupType = store.popupType {
+        MissionResultView(
+          type: popupType,
+          onFirstButtonTapped: {
+            store.send(.popupFirstButtonTapped)
+          },
+          onSecondButtonTapped: {
+            store.send(.popupSecondButtonTapped)
+          },
+          onCloseButtonTapped: {
+            store.send(.popupDismissButtonTapped)
+          }
+        )
+      }
     }
   }
 

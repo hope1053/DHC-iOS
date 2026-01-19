@@ -10,6 +10,7 @@ import SwiftUI
 struct TodayMissionView: View, Equatable {
   private let remainingSeconds: Int
   private let completedMissionCount: Int
+  private let missionResult: MissionResult?
   private let didTapRewardButton: () -> Void
   private let showCollectedRewardButtonTapped: () -> Void
   private let getRewardButtonTapped: () -> Void
@@ -17,12 +18,14 @@ struct TodayMissionView: View, Equatable {
   init(
     remainingSeconds: Int,
     completedMissionCount: Int,
+    missionResult: MissionResult? = nil,
     didTapRewardButton: @escaping () -> Void,
     showCollectedRewardButtonTapped: @escaping () -> Void,
     getRewardButtonTapped: @escaping () -> Void
   ) {
     self.remainingSeconds = remainingSeconds
     self.completedMissionCount = completedMissionCount
+    self.missionResult = missionResult
     self.didTapRewardButton = didTapRewardButton
     self.showCollectedRewardButtonTapped = showCollectedRewardButtonTapped
     self.getRewardButtonTapped = getRewardButtonTapped
@@ -30,7 +33,8 @@ struct TodayMissionView: View, Equatable {
   
   static func == (lhs: TodayMissionView, rhs: TodayMissionView) -> Bool {
     lhs.remainingSeconds == rhs.remainingSeconds &&
-    lhs.completedMissionCount == rhs.completedMissionCount
+    lhs.completedMissionCount == rhs.completedMissionCount &&
+    lhs.missionResult == rhs.missionResult
   }
   
   var body: some View {
@@ -41,6 +45,7 @@ struct TodayMissionView: View, Equatable {
       MissionProgressView(
         completedMissionCount: completedMissionCount,
         totalMissionCount: 3,
+        missionResult: missionResult,
         onRewardTapped: didTapRewardButton,
         showCollectedRewardButtonTapped: showCollectedRewardButtonTapped,
         getRewardButtonTapped: getRewardButtonTapped
@@ -57,6 +62,7 @@ struct TodayMissionView: View, Equatable {
 struct MissionProgressView: View, Equatable {
   private let completedMissionCount: Int
   private let totalMissionCount: Int
+  private let missionResult: MissionResult?
   private let onRewardTapped: () -> Void
   private let showCollectedRewardButtonTapped: () -> Void
   private let getRewardButtonTapped: () -> Void
@@ -64,12 +70,14 @@ struct MissionProgressView: View, Equatable {
   init(
     completedMissionCount: Int,
     totalMissionCount: Int,
+    missionResult: MissionResult? = nil,
     onRewardTapped: @escaping () -> Void,
     showCollectedRewardButtonTapped: @escaping () -> Void,
     getRewardButtonTapped: @escaping () -> Void
   ) {
     self.completedMissionCount = completedMissionCount
     self.totalMissionCount = totalMissionCount
+    self.missionResult = missionResult
     self.onRewardTapped = onRewardTapped
     self.showCollectedRewardButtonTapped = showCollectedRewardButtonTapped
     self.getRewardButtonTapped = getRewardButtonTapped
@@ -77,7 +85,8 @@ struct MissionProgressView: View, Equatable {
   
   static func == (lhs: MissionProgressView, rhs: MissionProgressView) -> Bool {
     lhs.completedMissionCount == rhs.completedMissionCount &&
-    lhs.totalMissionCount == rhs.totalMissionCount
+    lhs.totalMissionCount == rhs.totalMissionCount &&
+    lhs.missionResult == rhs.missionResult
   }
   
   private var steps: [Milestone] {
@@ -93,6 +102,65 @@ struct MissionProgressView: View, Equatable {
   }
   private var currentStepIndex: Int {
     min(completedMissionCount, steps.count - 1)
+  }
+  
+  private var headerTitle: String {
+    guard let missionResult else {
+      return "오늘의 미션"
+    }
+    
+    switch missionResult {
+    case .todayFail:
+      return "아쉽게 실패했어요"
+    case .yesterDayFail:
+      return "리워드 2배 이벤트"
+    case .fewDaysFail:
+      return "웰컴백 이벤트"
+    case .todaySuccess, .yesterDaySuccess:
+      return "오늘의 미션"
+    }
+  }
+  
+  private var headerDescription: String {
+    guard let missionResult else {
+      switch completedMissionCount {
+      case 0:
+        return "단 \(totalMissionCount)개만 도전해 보세요"
+      case 1:
+        return "벌써 한개나 성공했네요!"
+      case 2:
+        return "리워드까지 한 걸음 남았어요!"
+      case 3:
+        return "리워드를 받아보세요!"
+      default:
+        return "단 \(totalMissionCount)개만 도전해 보세요"
+      }
+    }
+    
+    switch missionResult {
+    case .todayFail:
+      return """
+      하지만 내일 미션을 성공하면
+      리워드가 두배에요!
+      """
+    case .yesterDayFail:
+      return "오늘은 리워드 보상이 2배에요!"
+    case .fewDaysFail:
+      return "오늘은 리워드 보상이 4배에요!"
+    case .todaySuccess, .yesterDaySuccess:
+      switch completedMissionCount {
+      case 0:
+        return "단 \(totalMissionCount)개만 도전해 보세요"
+      case 1:
+        return "벌써 한개나 성공했네요!"
+      case 2:
+        return "리워드까지 한 걸음 남았어요!"
+      case 3:
+        return "리워드를 받아보세요!"
+      default:
+        return "단 \(totalMissionCount)개만 도전해 보세요"
+      }
+    }
   }
   
   var body: some View {
@@ -142,11 +210,11 @@ struct MissionProgressView: View, Equatable {
           }
         
         VStack(alignment: .leading, spacing: 4) {
-          Text("오늘의 미션")
+          Text(headerTitle)
             .textStyle(.h5)
             .foregroundStyle(ColorResource.Text.main.color)
           
-          Text("단 \(totalMissionCount)개만 도전해 보세요")
+          Text(headerDescription)
             .textStyle(.body5)
             .foregroundStyle(ColorResource.Text.Body.primary.color)
         }
