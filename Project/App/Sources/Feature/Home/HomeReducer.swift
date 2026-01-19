@@ -14,6 +14,9 @@ struct HomeReducer {
   @Dependency(\.homeAPIClient) var homeAPIClient
   @Dependency(\.dateFormatterCache) var dateFormatterCache
   @Dependency(\.missionTimerClient) var missionTimerClient
+  @Dependency(\.shareClient) var shareClient
+  @Dependency(\.userManager) var userManager
+  @Dependency(\.webViewService) var webViewService
   
   private enum CancelID {
     case timer
@@ -417,7 +420,26 @@ struct HomeReducer {
         return .none
       }
       
-      return .send(.presentWebView(url))
+      guard let userId = userManager.getUserID() else {
+        return .send(.presentWebView(url))
+      }
+      
+      return .run { [shareClient, webViewService] send in
+        do {
+          let shareCode = try await shareClient.createShareCode(userId)
+          
+          if let domain = url.host {
+            await webViewService.setCookie("shareToken", shareCode, domain)
+          } else {
+            debugPrint("⚠️ [Share] URL domain을 추출할 수 없음: \(url)")
+          }
+          
+          await send(.presentWebView(url))
+        } catch {
+          debugPrint("❌ [Share] shareCode 생성 실패: \(error)")
+          await send(.presentWebView(url))
+        }
+      }
     default:
       return .none
     }
