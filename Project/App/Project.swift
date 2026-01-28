@@ -29,7 +29,7 @@ let project = Project(
           "NSAppTransportSecurity": [
             "NSAllowsArbitraryLoads": true,
           ],
-          "CFBundleShortVersionString": "1.0.3"
+          "CFBundleShortVersionString": "1.1.0"
         ]
       ),
       sources: ["Sources/**"],
