@@ -49,6 +49,7 @@ extension HomeDTO {
     
     var toDomain: HomeInfo.Test {
       .init(
+        version: version,
         title: title,
         subTitle: subTitle,
         imageURL: URL(string: imageURL ?? ""),

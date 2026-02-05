@@ -17,6 +17,7 @@ struct HomeReducer {
   @Dependency(\.shareClient) var shareClient
   @Dependency(\.userManager) var userManager
   @Dependency(\.webViewService) var webViewService
+  @Dependency(\.testBannerStorage) var testBannerStorage
   
   private enum CancelID {
     case timer
@@ -42,7 +43,7 @@ struct HomeReducer {
     var presentMissionDonePopup = false
     var popupType: MissionResult?
     var presentToast = false
-    var testParticipation: TestParticipationReducer.State?
+    var testParticipation: TestParticipationReducer.State? = nil
 
     var fortuneLoadingComplete: FortuneLoadingCompleteReducer.State?
     var isFirstLaunchOfToday: Bool
@@ -64,11 +65,6 @@ struct HomeReducer {
       self.homeInfo = homeInfo
       self.fortuneLoadingComplete = fortuneLoadingComplete
       self.isFirstLaunchOfToday = isFirstLaunchOfToday
-      if let test = homeInfo.availableTest {
-        self.testParticipation = TestParticipationReducer.State(test: test)
-      } else {
-        self.testParticipation = nil
-      }
     }
   }
 
@@ -243,7 +239,7 @@ struct HomeReducer {
       return .none
       
     case .testParticipation(let action):
-      return handleTestParticipationAction(action)
+      return handleTestParticipationAction(state: &state, action)
       
     case .presentWebView(let url):
       state.path.append(.webView(DHCWebReducer.State(url: url)))
@@ -354,8 +350,10 @@ struct HomeReducer {
         state.popupType = MissionResult(from: homeInfo.pastMissionStatus)
       }
       
-      // 서버 데이터 기반: availableTest 업데이트
-      if let test = homeInfo.availableTest {
+      // 닫힌 버전 필터링: availableTest가 있고 해당 버전이 닫힌 버전에 없는 경우에만 표시
+      let dismissedVersions = testBannerStorage.getDismissedVersions()
+      if let test = homeInfo.availableTest,
+         !dismissedVersions.contains(test.version) {
         state.testParticipation = TestParticipationReducer.State(test: test)
       } else {
         state.testParticipation = nil
@@ -413,9 +411,14 @@ struct HomeReducer {
     }
   }
   
-  private func handleTestParticipationAction(_ action: TestParticipationReducer.Action) -> Effect<Action> {
+  private func handleTestParticipationAction(state: inout State, _ action: TestParticipationReducer.Action) -> Effect<Action> {
     switch action {
+    case .delegate(.dismissBanner):
+      state.testParticipation = nil
+      return .none
     case .delegate(.participate(let url)):
+      state.testParticipation = nil
+      
       guard let url else {
         return .none
       }
