@@ -11,6 +11,8 @@ import ComposableArchitecture
 
 @Reducer
 struct TestParticipationReducer {
+  @Dependency(\.testBannerStorage) var testBannerStorage
+  
   @ObservableState
   struct State: Equatable {
     let test: HomeInfo.Test
@@ -22,6 +24,7 @@ struct TestParticipationReducer {
     case delegate(Delegate)
     
     enum Delegate {
+      case dismissBanner
       case participate(url: URL?)
     }
   }
@@ -30,11 +33,11 @@ struct TestParticipationReducer {
     Reduce { state, action in
       switch action {
       case .closeButtonTapped:
-        // TODO: 서버 호출
-        return .none
+        testBannerStorage.addDismissedVersion(state.test.version)
+        return .send(.delegate(.dismissBanner))
         
       case .participateButtonTapped:
-        // TODO: 서버 호출
+        testBannerStorage.addDismissedVersion(state.test.version)
         return .send(.delegate(.participate(url: state.test.testURL)))
         
       case .delegate:
