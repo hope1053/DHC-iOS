@@ -35,10 +35,10 @@ extension DependencyValues {
 extension WebViewService: DependencyKey {
   static let liveValue = WebViewService(
     loadURL: { url in
-      WebViewCoordinator.shared.loadURL(url)
+        await WebViewCoordinator.shared.loadURL(url)
     },
     setupMessageHandler: { handler in
-      WebViewCoordinator.shared.setupMessageHandler(handler)
+        await WebViewCoordinator.shared.setupMessageHandler(handler)
     },
     evaluateJavaScript: { script in
       try await WebViewCoordinator.shared.evaluateJavaScript(script)
