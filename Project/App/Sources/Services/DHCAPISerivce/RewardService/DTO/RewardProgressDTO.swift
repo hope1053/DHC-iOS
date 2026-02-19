@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - RewardProgressDTO
-struct RewardProgressDTO: Codable {
+struct RewardProgressDTO: Decodable {
     let userProgressInfo: UserProgressInfoDTO
     let rewardList: [RewardItemDTO]
 }
@@ -17,10 +17,44 @@ extension RewardProgressDTO {
   var toDomain: RewardInfo {
     .init(
       userProgressInfo: userProgressInfo.toDomain,
-      totalLevel: 8, // TODO
+      totalLevel: 8, // TODO: 현재는 클라에서 총 레벨 관리하는걸로 유지, 추후 서버에서 총 레벨 내려줘야하는 경우 수정 필요
       receivedRewards: rewardList.map { $0.toDomain }
     )
   }
+}
+
+// MARK: - User
+struct UserProgressInfoDTO: Decodable {
+    let rewardImageURL: String
+    let rewardLevel: RewardLevelDTO
+    let totalPoint: Int
+    let currentLevelPoint: Int
+    let nextLevelRequiredPoint: Int
+
+    enum CodingKeys: String, CodingKey {
+        case rewardImageURL = "rewardImageUrl"
+        case rewardLevel, totalPoint, currentLevelPoint, nextLevelRequiredPoint
+    }
+}
+
+extension UserProgressInfoDTO {
+  var toDomain: RewardInfo.UserProgressInfo {
+    .init(
+      currentPoints: currentLevelPoint,
+      currentLevel: .init(
+        level: rewardLevel.level,
+        name: rewardLevel.name,
+        imageURL: URL(string: rewardImageURL)
+      ),
+      pointsToNextLevel: nextLevelRequiredPoint
+    )
+  }
+}
+
+struct RewardLevelDTO: Decodable {
+    let level: Int
+    let name: String
+    let requiredTotalPoint: Int
 }
 
 // MARK: - RewardList
@@ -36,31 +70,6 @@ extension RewardItemDTO {
       title: title,
       iconURL: nil,
       message: nil
-    )
-  }
-}
-
-// MARK: - User
-struct UserProgressInfoDTO: Codable {
-    let rewardImageURL, rewardLevel: String
-    let totalExp: Int
-
-    enum CodingKeys: String, CodingKey {
-        case rewardImageURL = "rewardImageUrl"
-        case rewardLevel, totalExp
-    }
-}
-
-extension UserProgressInfoDTO {
-  var toDomain: RewardInfo.UserProgressInfo {
-    .init(
-      currentPoints: totalExp,
-      currentLevel: .init(
-        level: 1, // TODO
-        name: rewardLevel,
-        imageURL: URL(string: rewardImageURL)
-      ),
-      pointsToNextLevel: 100 // TODO
     )
   }
 }
