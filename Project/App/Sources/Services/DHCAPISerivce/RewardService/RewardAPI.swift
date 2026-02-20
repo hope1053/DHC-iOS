@@ -17,7 +17,7 @@ extension RewardAPI: RequestTarget {
   var path: String {
     switch self {
     case .rewardProgress:
-      "/view/users/{userId}/reward-progress"
+      "/view/users/{userID}/reward-progress"
     }
   }
 

@@ -1,5 +1,5 @@
 //
-//  RewardDetailView.swift
+//  YearlyFortuneView.swift
 //  Flifin
 //
 //  Created by hyerin on 1/9/26.
@@ -10,11 +10,11 @@ import SwiftUI
 import ComposableArchitecture
 import SDWebImageSwiftUI
 
-struct RewardDetailView: View {
-  let store: StoreOf<RewardDetailReducer>
+struct YearlyFortuneView: View {
+  let store: StoreOf<YearlyFortuneReducer>
   private let columns: [GridItem] = [GridItem(spacing: 12), GridItem()]
   
-  init(store: StoreOf<RewardDetailReducer>) {
+  init(store: StoreOf<YearlyFortuneReducer>) {
     self.store = store
   }
   
@@ -80,7 +80,7 @@ struct RewardDetailView: View {
     .navigationBarBackButtonHidden()
   }
   
-  func overallFortuneView(overallFortune: RewardFortuneDetail.OverallFortune) -> some View {
+  func overallFortuneView(overallFortune: YearlyFortune.OverallFortune) -> some View {
     VStack(alignment: .leading, spacing: 16) {
       Text("전반적인 운세")
         .textStyle(.h4_1)
@@ -114,7 +114,7 @@ struct RewardDetailView: View {
     .padding(.horizontal, 20)
   }
   
-  func elementReflectionView(elementShift: RewardFortuneDetail.ElementShift) -> some View {
+  func elementReflectionView(elementShift: YearlyFortune.ElementShift) -> some View {
     VStack(alignment: .leading, spacing: 16) {
       Text("올해의 기운 변화")
         .textStyle(.h5_1)
@@ -154,10 +154,10 @@ struct RewardDetailView: View {
 }
 
 #Preview {
-  RewardDetailView(
+  YearlyFortuneView(
     store: Store(
       initialState: .init(type: .sample),
-      reducer: RewardDetailReducer.init
+      reducer: YearlyFortuneReducer.init
     )
   )
 }

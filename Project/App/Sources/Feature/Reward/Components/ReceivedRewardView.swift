@@ -56,8 +56,11 @@ struct ReceivedRewardView: View {
                 // message가 있으면 토스트 표시
                 onRewardItemTapped(.showToast(message))
               } else {
-                // message가 없으면 id로 화면 이동
-                onRewardItemTapped(.moveToDetailView(reward.id))
+                // message가 없으면 상세 화면으로 이동
+                onRewardItemTapped(.moveToDetailView(
+                  type: reward.type,
+                  isUsed: reward.isUsed
+                ))
               }
             }
         }

@@ -8,6 +8,7 @@
 import SwiftUI
 
 import ComposableArchitecture
+import SDWebImageSwiftUI
 
 struct RewardView: View {
   @Bindable var store: StoreOf<RewardReducer>
@@ -24,34 +25,43 @@ struct RewardView: View {
         
         ScrollView {
           VStack(spacing: 0) {
-            placeholderGraphic
-              .padding(.bottom, 25)
+            WebImage(url: store.userProgressInfo?.currentLevel.imageURL) { image in
+              image.resizable()
+            } placeholder: {
+              EmptyView()
+            }
+            .frame(width: 132, height: 145)
+            .padding(.top, 19)
+            .padding(.bottom, 25)
             
             headerView
             .padding(.bottom, 40)
             
             VStack(spacing: 8) {
               // 메인 리워드 카드
-              RewardProgressCardView(
-                currentPoints: store.userProgressInfo.currentPoints,
-                pointsToNextLevel: store.userProgressInfo.pointsToNextLevel,
-                currentLevel: store.userProgressInfo.currentLevel,
-                totalSteps: store.rewardInfo.totalLevel,
-                onOpenRewardButtonTapped: {
-                  store.send(.onOpenRewardButtonTapped)
-                },
-                onWhatIsRewardButtonTapped: {
-                  store.send(.onWhatIsRewardButtonTapped)
-                }
-              )
-              
-              ReceivedRewardView(
-                rewards: store.rewardInfo.receivedRewards,
-                onRewardItemTapped: { action in
-                  store.send(.onRewardItemTapped(action: action))
-                }
-              )
-              .padding(.bottom, 72)
+              if let userInfo = store.userProgressInfo,
+                 let rewardInfo = store.rewardInfo {
+                RewardProgressCardView(
+                  currentPoints: userInfo.currentPoints,
+                  pointsToNextLevel: userInfo.pointsToNextLevel,
+                  currentLevel: userInfo.currentLevel,
+                  totalSteps: rewardInfo.totalLevel,
+                  onOpenRewardButtonTapped: {
+                    store.send(.onOpenRewardButtonTapped)
+                  },
+                  onWhatIsRewardButtonTapped: {
+                    store.send(.onWhatIsRewardButtonTapped)
+                  }
+                )
+                
+                ReceivedRewardView(
+                  rewards: rewardInfo.receivedRewards,
+                  onRewardItemTapped: { action in
+                    store.send(.onRewardItemTapped(action: action))
+                  }
+                )
+                .padding(.bottom, 72)
+              }
             }
           }
         }
@@ -68,34 +78,30 @@ struct RewardView: View {
         isPresented: $store.isToastPresented.sending(\.toastPresentedChanged),
         type: store.toastType
       )
+      .onAppear {
+        store.send(.onAppear)
+      }
     } destination: { store in
       switch store.case {
-      case .rewardDetail(let store):
-        RewardDetailView(store: store)
+      case .yearlyFortune(let store):
+        YearlyFortuneView(store: store)
       }
     }
   }
   
-  private var placeholderGraphic: some View {
-    VStack {
-      Text("그래픽 (변경예정)")
-        .textStyle(.body3)
-        .foregroundStyle(ColorResource.Neutral._500.color)
-    }
-    .frame(height: 120)
-  }
-  
   var headerView: some View {
     HStack(spacing: 8) {
-      BadgeView(
-        text: "lv.\(store.userProgressInfo.currentLevel.level)",
-        textColor: ColorResource.Text.Body.primary.color,
-        font: Typography.Head.h8
-      )
-      
-      Text(store.userProgressInfo.currentLevel.name)
-        .textStyle(.h1)
-        .foregroundStyle(LinearGradient(.text02))
+      if let userProgressInfo = store.userProgressInfo {
+        BadgeView(
+          text: "Lv.\(userProgressInfo.currentLevel.level)",
+          textColor: ColorResource.Text.Body.primary.color,
+          font: Typography.Head.h8
+        )
+        
+        Text(userProgressInfo.currentLevel.name)
+          .textStyle(.h1)
+          .foregroundStyle(LinearGradient(.text02))
+      }
       
       Button {
         store.send(.infoButtonTapped)

@@ -11,7 +11,7 @@ import ComposableArchitecture
 
 enum ReceivedRewardAction {
   case showToast(String)
-  case moveToDetailView(Int)
+  case moveToDetailView(type: RewardItemType, isUsed: Bool)
 }
 
 @Reducer
@@ -21,12 +21,12 @@ struct RewardReducer {
   @ObservableState
   struct State: Equatable {
     var path = StackState<Path.State>()
-    var rewardInfo: RewardInfo = .initial
+    var rewardInfo: RewardInfo?
     var toastType: ToastType = .textWithCheck("")
     var isToastPresented: Bool = false
     
-    var userProgressInfo: RewardInfo.UserProgressInfo {
-      rewardInfo.userProgressInfo
+    var userProgressInfo: RewardInfo.UserProgressInfo? {
+      rewardInfo?.userProgressInfo
     }
 
     init() {
@@ -35,6 +35,7 @@ struct RewardReducer {
 
   enum Action {
     // View Action
+    case onAppear
     case onOpenRewardButtonTapped
     case onWhatIsRewardButtonTapped
     case infoButtonTapped
@@ -42,26 +43,53 @@ struct RewardReducer {
     case toastPresentedChanged(Bool)
     
     // Internal Action
+    case fetchRewardProgress
+    case fetchRewardProgressResponse(Result<RewardInfo, Error>)
     case showToast(ToastType)
     
     // Route Action
     case path(StackActionOf<Path>)
-    case moveToRewardDetail(type: RewardDetailType)
+    case moveToYearlyFortune(type: YearlyFortuneType)
   }
   
   @Reducer
   enum Path {
-    case rewardDetail(RewardDetailReducer)
+    case yearlyFortune(YearlyFortuneReducer)
   }
+  
+  @Dependency(\.rewardClient) var rewardClient
 
   var body: some Reducer<State, Action> {
     Reduce { state, action in
       switch action {
+      case .onAppear:
+        return .send(.fetchRewardProgress)
+        
+      case .fetchRewardProgress:
+        return .run { send in
+          await send(
+            .fetchRewardProgressResponse(
+              Result {
+                try await rewardClient.fetchRewardProcess()
+              }
+            )
+          )
+        }
+        
+      case .fetchRewardProgressResponse(.success(let rewardInfo)):
+        state.rewardInfo = rewardInfo
+        return .none
+        
+      case .fetchRewardProgressResponse(.failure(let error)):
+        // TODO: 에러 처리 (토스트 메시지 또는 에러 알림)
+        print("Failed to fetch reward progress: \(error)")
+        return .none
+        
       case .onOpenRewardButtonTapped:
-        return .send(.moveToRewardDetail(type: .detail(id: 0)))
+        return .send(.moveToYearlyFortune(type: .detail))
         
       case .onWhatIsRewardButtonTapped:
-        return .send(.moveToRewardDetail(type: .sample))
+        return .send(.moveToYearlyFortune(type: .sample))
         
       case .infoButtonTapped:
         // TODO: 정보 버튼 액션 구현
@@ -69,8 +97,8 @@ struct RewardReducer {
         
       case .onRewardItemTapped(let action):
         switch action {
-        case .moveToDetailView(let id):
-          return .send(.moveToRewardDetail(type: .detail(id: id)))
+        case .moveToDetailView(let type, let isUsed):
+          return .send(.moveToYearlyFortune(type: .detail))
         case .showToast(let toastMessage):
           state.toastType = .imageAndText(ImageResource.Icon.gift.image, toastMessage)
           state.isToastPresented = true
@@ -85,13 +113,13 @@ struct RewardReducer {
         state.toastType = toastType
         return .none
         
-      case .moveToRewardDetail(let type):
-        state.path.append(.rewardDetail(RewardDetailReducer.State(type: type)))
+      case .moveToYearlyFortune(let type):
+        state.path.append(.yearlyFortune(YearlyFortuneReducer.State(type: type)))
         return .none
         
       case let .path(action):
         switch action {
-        case .element(id: let id, action: .rewardDetail(.backButtonTapped)):
+        case .element(id: let id, action: .yearlyFortune(.backButtonTapped)):
           state.path.pop(from: id)
           return .none
           

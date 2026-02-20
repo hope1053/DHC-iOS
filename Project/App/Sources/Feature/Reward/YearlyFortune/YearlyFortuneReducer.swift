@@ -1,5 +1,5 @@
 //
-//  RewardDetailReducer.swift
+//  YearlyFortuneReducer.swift
 //  Flifin
 //
 //  Created by hyerin on 1/9/26.
@@ -9,32 +9,32 @@ import Foundation
 
 import ComposableArchitecture
 
-enum RewardDetailType: Equatable {
+enum YearlyFortuneType: Equatable {
   case sample
-  case detail(id: Int)
+  case detail
 }
 
 @Reducer
-struct RewardDetailReducer {
+struct YearlyFortuneReducer {
   init() {}
   
   @Dependency(\.dateFormatterCache) var dateFormatterCache
 
   @ObservableState
   struct State: Equatable {
-    let type: RewardDetailType
-    var rewardFortuneDetail: RewardFortuneDetail?
+    let type: YearlyFortuneType
+    var rewardFortuneDetail: YearlyFortune?
     
     var title: String { rewardFortuneDetail?.title ?? "" }
-    var scoreInfo: RewardFortuneDetail.FortuneScore? { rewardFortuneDetail?.scoreInfo }
-    var cardInfo: RewardFortuneDetail.FortuneCard? { rewardFortuneDetail?.cardInfo }
-    var overallFortune: RewardFortuneDetail.OverallFortune? { rewardFortuneDetail?.overallFortune }
-    var categoryFortuneItems: [RewardFortuneDetail.CategoryFortuneItem] { rewardFortuneDetail?.categoryFortuneItems ?? [] }
-    var elementBalance: RewardFortuneDetail.ElementBalance? { rewardFortuneDetail?.elementBalance }
-    var elementShift: RewardFortuneDetail.ElementShift? { rewardFortuneDetail?.elementShift }
-    var tipInfos: [RewardFortuneDetail.Tip] { rewardFortuneDetail?.tipInfos ?? [] }
+    var scoreInfo: YearlyFortune.FortuneScore? { rewardFortuneDetail?.scoreInfo }
+    var cardInfo: YearlyFortune.FortuneCard? { rewardFortuneDetail?.cardInfo }
+    var overallFortune: YearlyFortune.OverallFortune? { rewardFortuneDetail?.overallFortune }
+    var categoryFortuneItems: [YearlyFortune.CategoryFortuneItem] { rewardFortuneDetail?.categoryFortuneItems ?? [] }
+    var elementBalance: YearlyFortune.ElementBalance? { rewardFortuneDetail?.elementBalance }
+    var elementShift: YearlyFortune.ElementShift? { rewardFortuneDetail?.elementShift }
+    var tipInfos: [YearlyFortune.Tip] { rewardFortuneDetail?.tipInfos ?? [] }
 
-    init(type: RewardDetailType) {
+    init(type: YearlyFortuneType) {
       self.type = type
     }
   }
@@ -46,7 +46,7 @@ struct RewardDetailReducer {
     
     // Internal Action
     case fetchRewardDetail
-    case rewardDetailResponse(RewardFortuneDetail)
+    case rewardDetailResponse(YearlyFortune)
     case rewardDetailError(Error)
     
     // Route Action
@@ -63,11 +63,11 @@ struct RewardDetailReducer {
         
       case .fetchRewardDetail:
         switch state.type {
-        case .detail(let id):
+        case .detail:
           // TODO: API Client 구현 시 실제 네트워크 호출로 대체
           // return .run { send in
           //   do {
-          //     let rewardDetail = try await rewardAPIClient.fetchRewardDetail(id)
+          //     let rewardDetail = try await rewardAPIClient.fetchRewardDetail()
           //     await send(.rewardDetailResponse(rewardDetail))
           //   } catch {
           //     await send(.rewardDetailError(error))
