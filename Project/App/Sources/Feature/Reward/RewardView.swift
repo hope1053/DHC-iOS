@@ -32,26 +32,29 @@ struct RewardView: View {
             
             VStack(spacing: 8) {
               // 메인 리워드 카드
-              RewardProgressCardView(
-                currentPoints: store.userProgressInfo.currentPoints,
-                pointsToNextLevel: store.userProgressInfo.pointsToNextLevel,
-                currentLevel: store.userProgressInfo.currentLevel,
-                totalSteps: store.rewardInfo.totalLevel,
-                onOpenRewardButtonTapped: {
-                  store.send(.onOpenRewardButtonTapped)
-                },
-                onWhatIsRewardButtonTapped: {
-                  store.send(.onWhatIsRewardButtonTapped)
-                }
-              )
-              
-              ReceivedRewardView(
-                rewards: store.rewardInfo.receivedRewards,
-                onRewardItemTapped: { action in
-                  store.send(.onRewardItemTapped(action: action))
-                }
-              )
-              .padding(.bottom, 72)
+              if let userInfo = store.userProgressInfo,
+                 let rewardInfo = store.rewardInfo {
+                RewardProgressCardView(
+                  currentPoints: userInfo.currentPoints,
+                  pointsToNextLevel: userInfo.pointsToNextLevel,
+                  currentLevel: userInfo.currentLevel,
+                  totalSteps: rewardInfo.totalLevel,
+                  onOpenRewardButtonTapped: {
+                    store.send(.onOpenRewardButtonTapped)
+                  },
+                  onWhatIsRewardButtonTapped: {
+                    store.send(.onWhatIsRewardButtonTapped)
+                  }
+                )
+                
+                ReceivedRewardView(
+                  rewards: rewardInfo.receivedRewards,
+                  onRewardItemTapped: { action in
+                    store.send(.onRewardItemTapped(action: action))
+                  }
+                )
+                .padding(.bottom, 72)
+              }
             }
           }
         }
@@ -87,15 +90,17 @@ struct RewardView: View {
   
   var headerView: some View {
     HStack(spacing: 8) {
-      BadgeView(
-        text: "lv.\(store.userProgressInfo.currentLevel.level)",
-        textColor: ColorResource.Text.Body.primary.color,
-        font: Typography.Head.h8
-      )
-      
-      Text(store.userProgressInfo.currentLevel.name)
-        .textStyle(.h1)
-        .foregroundStyle(LinearGradient(.text02))
+      if let userProgressInfo = store.userProgressInfo {
+        BadgeView(
+          text: "Lv.\(userProgressInfo.currentLevel.level)",
+          textColor: ColorResource.Text.Body.primary.color,
+          font: Typography.Head.h8
+        )
+        
+        Text(userProgressInfo.currentLevel.name)
+          .textStyle(.h1)
+          .foregroundStyle(LinearGradient(.text02))
+      }
       
       Button {
         store.send(.infoButtonTapped)

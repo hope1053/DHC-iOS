@@ -21,12 +21,12 @@ struct RewardReducer {
   @ObservableState
   struct State: Equatable {
     var path = StackState<Path.State>()
-    var rewardInfo: RewardInfo = .initial
+    var rewardInfo: RewardInfo?
     var toastType: ToastType = .textWithCheck("")
     var isToastPresented: Bool = false
     
-    var userProgressInfo: RewardInfo.UserProgressInfo {
-      rewardInfo.userProgressInfo
+    var userProgressInfo: RewardInfo.UserProgressInfo? {
+      rewardInfo?.userProgressInfo
     }
 
     init() {
