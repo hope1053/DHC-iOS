@@ -63,9 +63,14 @@ struct RewardLevelDTO: Decodable {
 }
 
 // MARK: - RewardList
-struct RewardItemDTO: Codable {
-    let id: Int
-    let title: String
+struct RewardItemDTO: Decodable {
+  let id: Int
+  let title: String
+  let isUnlocked: Bool
+  let isUsed: Bool
+  let iconURL: String?
+  let message: String?
+  let type: RewardItemType
 }
 
 extension RewardItemDTO {
@@ -73,8 +78,10 @@ extension RewardItemDTO {
     .init(
       id: id,
       title: title,
-      iconURL: nil,
-      message: nil
+      type: type,
+      iconURL: isUnlocked ? URL.urlForResource(.lock) : URL(string: iconURL),
+      message: message,
+      isUsed: isUsed
     )
   }
 }
