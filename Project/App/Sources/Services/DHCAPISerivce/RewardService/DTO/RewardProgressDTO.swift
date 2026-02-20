@@ -11,6 +11,11 @@ import Foundation
 struct RewardProgressDTO: Decodable {
     let userProgressInfo: UserProgressInfoDTO
     let rewardList: [RewardItemDTO]
+    
+    enum CodingKeys: String, CodingKey {
+        case userProgressInfo = "user"
+        case rewardList
+    }
 }
 
 extension RewardProgressDTO {
