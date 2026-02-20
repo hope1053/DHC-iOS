@@ -1,5 +1,5 @@
 //
-//  RewardFortuneDetail.swift
+//  YearlyFortune.swift
 //  Flifin
 //
 //  Created by hyerin on 1/9/26.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct RewardFortuneDetail: Equatable {
+struct YearlyFortune: Equatable {
   let title: String
   let scoreInfo: FortuneScore
   let cardInfo: FortuneCard
@@ -38,7 +38,7 @@ struct RewardFortuneDetail: Equatable {
   }
 }
 
-extension RewardFortuneDetail {
+extension YearlyFortune {
   struct FortuneScore: Equatable {
     var fortuneTitle: String
     let scoreString: String
@@ -112,9 +112,9 @@ extension RewardFortuneDetail {
   }
 }
 
-extension RewardFortuneDetail {
-  static func sample(date: String) -> RewardFortuneDetail {
-    RewardFortuneDetail(
+extension YearlyFortune {
+  static func sample(date: String) -> YearlyFortune {
+    YearlyFortune(
       title: "리워드는 뭔가요?",
       scoreInfo: .init(
         fortuneTitle: date,

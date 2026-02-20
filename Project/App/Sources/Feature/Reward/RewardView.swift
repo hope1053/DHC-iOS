@@ -76,8 +76,8 @@ struct RewardView: View {
       }
     } destination: { store in
       switch store.case {
-      case .rewardDetail(let store):
-        RewardDetailView(store: store)
+      case .yearlyFortune(let store):
+        YearlyFortuneView(store: store)
       }
     }
   }

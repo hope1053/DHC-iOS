@@ -10,7 +10,7 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct ElementBalanceView: View {
-  let elementBalance: RewardFortuneDetail.ElementBalance
+  let elementBalance: YearlyFortune.ElementBalance
   
   var body: some View {
     VStack(spacing: 0) {
@@ -57,7 +57,7 @@ struct ElementBalanceView: View {
     }
   }
   
-  func chartItem(item: RewardFortuneDetail.ElementBalance.ElementBalanceItem) -> some View {
+  func chartItem(item: YearlyFortune.ElementBalance.ElementBalanceItem) -> some View {
     VStack(spacing: 2) {
       VStack(spacing: 12) {
         Text("\(Int(item.percentage * 100))%")
