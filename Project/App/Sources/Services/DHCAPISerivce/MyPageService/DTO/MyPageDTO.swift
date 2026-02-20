@@ -12,7 +12,7 @@ struct MyPageDTO: Decodable {
   let birthDate: BirthDateInfo
   let birthTime: String?
   let preferredMissionCategoryList: [MissionCategoryInfo]
-  let fortuneTestList: [FortuneTestInfo]
+  let fortuneTests: [FortuneTestInfo]
 }
 
 extension MyPageDTO {
@@ -69,9 +69,9 @@ extension MyPageDTO {
 
 extension MyPageDTO {
   struct FortuneTestInfo: Decodable {
-    let imageURL: URL?
+    let imageURL: String?
     let displayName: String
-    let testURL: URL?
+    let testURL: String?
     
     enum CodingKeys: String, CodingKey {
       case testURL
@@ -95,8 +95,8 @@ extension MyPageDTO {
       preferredMissionCategoryList: preferredMissionCategoryList.map {
         .init(displayName: $0.displayName, imageURL: $0.imageURL)
       },
-      fortuneTestList: fortuneTestList.map {
-        .init(imageURL: $0.imageURL, displayName: $0.displayName, testURL: $0.testURL)
+      fortuneTestList: fortuneTests.map {
+        .init(imageURL: URL(string: $0.imageURL), displayName: $0.displayName, testURL: URL(string: $0.testURL))
       }
     )
   }
