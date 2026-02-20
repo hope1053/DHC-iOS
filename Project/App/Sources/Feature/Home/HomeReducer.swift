@@ -14,9 +14,6 @@ struct HomeReducer {
   @Dependency(\.homeAPIClient) var homeAPIClient
   @Dependency(\.dateFormatterCache) var dateFormatterCache
   @Dependency(\.missionTimerClient) var missionTimerClient
-  @Dependency(\.shareClient) var shareClient
-  @Dependency(\.userManager) var userManager
-  @Dependency(\.webViewService) var webViewService
   @Dependency(\.testBannerStorage) var testBannerStorage
   
   private enum CancelID {
@@ -48,6 +45,7 @@ struct HomeReducer {
     var fortuneLoadingComplete: FortuneLoadingCompleteReducer.State?
     var isFirstLaunchOfToday: Bool
     var toastMessage = ""
+    var shareTokenCookie = ShareTokenCookieReducer.State()
     var remainingSeconds: Int = 0
     var completedMissionCount: Int {
       missionList.todayDailyMissionList.filter { $0.isFinished }.count + (missionList.longTermMission.isFinished ? 1 : 0)
@@ -90,6 +88,7 @@ struct HomeReducer {
     case timerTicked(Int)
     
     case presentWebView(URL)
+    case shareTokenCookie(ShareTokenCookieReducer.Action)
 
     // Internal Actions
     case fetchHomeData
@@ -121,6 +120,9 @@ struct HomeReducer {
     
     Scope(state: \.missionList, action: \.missionList) {
       MissionListReducer()
+    }
+    Scope(state: \.shareTokenCookie, action: \.shareTokenCookie) {
+      ShareTokenCookieReducer()
     }
 
     Reduce(core)
@@ -244,6 +246,9 @@ struct HomeReducer {
     case .presentWebView(let url):
       state.path.append(.webView(DHCWebReducer.State(url: url)))
       return .none
+
+    case .shareTokenCookie(let action):
+      return handleShareTokenCookieAction(action)
     }
   }
   
@@ -423,26 +428,16 @@ struct HomeReducer {
         return .none
       }
       
-      guard let userId = userManager.getUserID() else {
-        return .send(.presentWebView(url))
-      }
-      
-      return .run { [shareClient, webViewService] send in
-        do {
-          let shareCode = try await shareClient.createShareCode(userId)
-          
-          if let domain = url.host {
-            await webViewService.setCookie("shareToken", shareCode, domain)
-          } else {
-            debugPrint("⚠️ [Share] URL domain을 추출할 수 없음: \(url)")
-          }
-          
-          await send(.presentWebView(url))
-        } catch {
-          debugPrint("❌ [Share] shareCode 생성 실패: \(error)")
-          await send(.presentWebView(url))
-        }
-      }
+      return .send(.shareTokenCookie(.prepare(url)))
+    default:
+      return .none
+    }
+  }
+  
+  private func handleShareTokenCookieAction(_ action: ShareTokenCookieReducer.Action) -> Effect<Action> {
+    switch action {
+    case .delegate(.prepared(let url)):
+      return .send(.presentWebView(url))
     default:
       return .none
     }

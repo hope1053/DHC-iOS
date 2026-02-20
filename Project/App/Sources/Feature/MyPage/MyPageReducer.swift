@@ -13,13 +13,11 @@ import ComposableArchitecture
 struct MyPageReducer {
   @Dependency(\.myPageClient) var myPageClient
   @Dependency(\.dateFormatterCache) var dateFormatterCache
-  @Dependency(\.shareClient) var shareClient
-  @Dependency(\.userManager) var userManager
-  @Dependency(\.webViewService) var webViewService
 
   @ObservableState
   struct State: Equatable {
     var path = StackState<Path.State>()
+    var shareTokenCookie = ShareTokenCookieReducer.State()
     var myPageInfo: MyPageInfo
     var isLoading = false
     var isRedacted = false
@@ -36,6 +34,7 @@ struct MyPageReducer {
     case resetAppButtonTapped
     case fortuneTestRowTapped(url: URL?)
     case presentWebView(URL)
+    case shareTokenCookie(ShareTokenCookieReducer.Action)
 
     // Internal Actions
     case fetchMyPageData
@@ -58,6 +57,10 @@ struct MyPageReducer {
   }
 
   var body: some ReducerOf<Self> {
+    Scope(state: \.shareTokenCookie, action: \.shareTokenCookie) {
+      ShareTokenCookieReducer()
+    }
+    
     Reduce { state, action in
       switch action {
       case .onAppear:
@@ -76,30 +79,19 @@ struct MyPageReducer {
           return .none
         }
         
-        guard let userId = userManager.getUserID() else {
-          return .send(.presentWebView(url))
-        }
-        
-        return .run { [shareClient, webViewService] send in
-          do {
-            let shareCode = try await shareClient.createShareCode(userId)
-            
-            if let domain = url.host {
-              await webViewService.setCookie("shareToken", shareCode, domain)
-            } else {
-              debugPrint("⚠️ [Share] URL domain을 추출할 수 없음: \(url)")
-            }
-            
-            await send(.presentWebView(url))
-          } catch {
-            debugPrint("❌ [Share] shareCode 생성 실패: \(error)")
-            await send(.presentWebView(url))
-          }
-        }
+        return .send(.shareTokenCookie(.prepare(url)))
         
       case .presentWebView(let url):
         state.path.append(.webView(DHCWebReducer.State(url: url)))
         return .none
+        
+      case .shareTokenCookie(let action):
+        switch action {
+        case .delegate(.prepared(let url)):
+          return .send(.presentWebView(url))
+        default:
+          return .none
+        }
 
       case .fetchMyPageData:
         state.isLoading = true
