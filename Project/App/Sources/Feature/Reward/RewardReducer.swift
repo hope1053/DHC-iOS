@@ -134,7 +134,10 @@ struct RewardReducer {
       case .onRewardItemTapped(let action):
         switch action {
         case .moveToDetailView(let type):
-          return .send(.moveToYearlyFortune(type: .detail))
+          switch type {
+          case .yearlyFortune:
+            return .send(.moveToYearlyFortune(type: .detail))
+          }
         case .showToast(let toastMessage):
           state.toastType = .imageAndText(ImageResource.Icon.gift.image, toastMessage)
           state.isToastPresented = true
