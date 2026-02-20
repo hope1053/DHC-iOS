@@ -62,13 +62,20 @@ struct MainTabView: View {
       }
 
       Tab(value: .myPage) {
-        NavigationStack {
+        NavigationStack(
+          path: $store.scope(state: \.myPageTab.path, action: \.myPageTab.path)
+        ) {
           MyPageView(
             store: store.scope(
               state: \.myPageTab,
               action: \.myPageTab
             )
           )
+        } destination: { store in
+          switch store.case {
+          case .webView(let store):
+            DHCWebView(store: store)
+          }
         }
       } label: {
         Image(.Icon.mypage)

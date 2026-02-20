@@ -16,6 +16,8 @@ struct MyPageReducer {
 
   @ObservableState
   struct State: Equatable {
+    var path = StackState<Path.State>()
+    var shareTokenCookie = ShareTokenCookieReducer.State()
     var myPageInfo: MyPageInfo
     var isLoading = false
     var isRedacted = false
@@ -31,6 +33,8 @@ struct MyPageReducer {
     case onAppear
     case resetAppButtonTapped
     case fortuneTestRowTapped(url: URL?)
+    case presentWebView(URL)
+    case shareTokenCookie(ShareTokenCookieReducer.Action)
 
     // Internal Actions
     case fetchMyPageData
@@ -38,14 +42,25 @@ struct MyPageReducer {
     case myPageDataFailed(Error)
 
     /// Navigation Actions
+    case path(StackActionOf<Path>)
     case appResetAlert(PresentationAction<AppResetAlertReducer.Action>)
     case delegate(Delegate)
     enum Delegate {
       case moveToRootView
+      case moveToHomeTab
     }
+  }
+  
+  @Reducer
+  enum Path {
+    case webView(DHCWebReducer)
   }
 
   var body: some ReducerOf<Self> {
+    Scope(state: \.shareTokenCookie, action: \.shareTokenCookie) {
+      ShareTokenCookieReducer()
+    }
+    
     Reduce { state, action in
       switch action {
       case .onAppear:
@@ -60,7 +75,23 @@ struct MyPageReducer {
         return .none
         
       case .fortuneTestRowTapped(let url):
+        guard let url else {
+          return .none
+        }
+        
+        return .send(.shareTokenCookie(.prepare(url)))
+        
+      case .presentWebView(let url):
+        state.path.append(.webView(DHCWebReducer.State(url: url)))
         return .none
+        
+      case .shareTokenCookie(let action):
+        switch action {
+        case .delegate(.prepared(let url)):
+          return .send(.presentWebView(url))
+        default:
+          return .none
+        }
 
       case .fetchMyPageData:
         state.isLoading = true
@@ -96,10 +127,23 @@ struct MyPageReducer {
       case .appResetAlert:
         return .none
 
+      case let .path(action):
+        switch action {
+        case .element(id: _, action: .webView(.delegate(.close))):
+          state.path.removeLast()
+          return .none
+        case .element(id: _, action: .webView(.delegate(.navigateToMain))):
+          state.path.removeLast()
+          return .send(.delegate(.moveToHomeTab))
+        default:
+          return .none
+        }
+
       case .delegate:
         return .none
       }
     }
+    .forEach(\.path, action: \.path)
     .ifLet(\.$appResetAlert, action: \.appResetAlert) {
       AppResetAlertReducer()
     }
@@ -139,3 +183,5 @@ struct MyPageReducer {
     return myPageInfo
   }
 }
+
+extension MyPageReducer.Path.State: Equatable {}
