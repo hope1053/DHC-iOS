@@ -34,6 +34,18 @@ struct YearlyFortuneView: View {
          let elementShift = store.elementShift {
         ScrollView {
           VStack(spacing: 24) {
+            if store.type == .sample {
+              TooltipView(
+                type: .rewardGradient,
+                message: """
+                아래 내용은 예시 운세예요 👀
+                레벨을 올리면 나의 실제 운세를 볼 수 있어요!
+                """,
+                expandWidth: true
+              )
+              .padding(.horizontal, 20)
+            }
+            
             FortuneView(
               title: scoreInfo.fortuneTitle,
               score: scoreInfo.scoreString,
@@ -47,7 +59,6 @@ struct YearlyFortuneView: View {
                 )
               }
             )
-            .padding(.top, 32)
             
             overallFortuneView(overallFortune: overallFortune)
             
@@ -60,6 +71,7 @@ struct YearlyFortuneView: View {
             tipInfoView
               .padding(.bottom, 53)
           }
+          .padding(.top, 24)
         }
         .clipShape(Rectangle())
         .scrollIndicators(.hidden)
