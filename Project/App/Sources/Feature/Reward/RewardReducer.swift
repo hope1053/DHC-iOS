@@ -35,6 +35,7 @@ struct RewardReducer {
 
   enum Action {
     // View Action
+    case onAppear
     case onOpenRewardButtonTapped
     case onWhatIsRewardButtonTapped
     case infoButtonTapped
@@ -42,6 +43,8 @@ struct RewardReducer {
     case toastPresentedChanged(Bool)
     
     // Internal Action
+    case fetchRewardProgress
+    case fetchRewardProgressResponse(Result<RewardInfo, Error>)
     case showToast(ToastType)
     
     // Route Action
@@ -53,10 +56,35 @@ struct RewardReducer {
   enum Path {
     case rewardDetail(RewardDetailReducer)
   }
+  
+  @Dependency(\.rewardClient) var rewardClient
 
   var body: some Reducer<State, Action> {
     Reduce { state, action in
       switch action {
+      case .onAppear:
+        return .send(.fetchRewardProgress)
+        
+      case .fetchRewardProgress:
+        return .run { send in
+          await send(
+            .fetchRewardProgressResponse(
+              Result {
+                try await rewardClient.fetchRewardProcess()
+              }
+            )
+          )
+        }
+        
+      case .fetchRewardProgressResponse(.success(let rewardInfo)):
+        state.rewardInfo = rewardInfo
+        return .none
+        
+      case .fetchRewardProgressResponse(.failure(let error)):
+        // TODO: 에러 처리 (토스트 메시지 또는 에러 알림)
+        print("Failed to fetch reward progress: \(error)")
+        return .none
+        
       case .onOpenRewardButtonTapped:
         return .send(.moveToRewardDetail(type: .detail(id: 0)))
         

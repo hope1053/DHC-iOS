@@ -71,6 +71,9 @@ struct RewardView: View {
         isPresented: $store.isToastPresented.sending(\.toastPresentedChanged),
         type: store.toastType
       )
+      .onAppear {
+        store.send(.onAppear)
+      }
     } destination: { store in
       switch store.case {
       case .rewardDetail(let store):
