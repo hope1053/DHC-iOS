@@ -21,7 +21,7 @@ struct SplashView: View {
     LottieView {
       await LottieAnimation.loadedFrom(url: .urlForResource(.splashLottie)!)
     } placeholder: {
-      ImageResource.splashThumbnail.image
+      ColorResource._0_C_0_F_14.color
         .ignoresSafeArea()
     }
     .animationDidFinish { _ in
