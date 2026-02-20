@@ -16,26 +16,6 @@ struct YearlyFortune: Equatable {
   let elementBalance: ElementBalance
   let elementShift: ElementShift
   let tipInfos: [Tip]
-  
-  init(
-    title: String,
-    scoreInfo: FortuneScore,
-    cardInfo: FortuneCard,
-    overallFortune: OverallFortune,
-    categoryFortuneItems: [CategoryFortuneItem],
-    elementBalance: ElementBalance,
-    elementShift: ElementShift,
-    tipInfos: [Tip]
-  ) {
-    self.title = title
-    self.scoreInfo = scoreInfo
-    self.cardInfo = cardInfo
-    self.overallFortune = overallFortune
-    self.categoryFortuneItems = categoryFortuneItems
-    self.elementBalance = elementBalance
-    self.elementShift = elementShift
-    self.tipInfos = tipInfos
-  }
 }
 
 extension YearlyFortune {
@@ -44,12 +24,6 @@ extension YearlyFortune {
     let scoreString: String
     let score: Int
     let summary: String
-  }
-
-  struct FortuneCard: Equatable {
-    let backgroundImageURL: URL?
-    let title: String
-    let fortune: String
   }
   
   struct OverallFortune: Equatable {
@@ -101,14 +75,6 @@ extension YearlyFortune {
   struct ElementShift: Equatable {
     let title: String
     let description: String
-  }
-  
-  struct Tip: Equatable, Identifiable {
-    var id: String { content }
-    let imageURL: URL?
-    let title: String
-    let content: String
-    let contentColor: Color?
   }
 }
 

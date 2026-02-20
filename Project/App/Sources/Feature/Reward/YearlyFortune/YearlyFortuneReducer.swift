@@ -27,12 +27,12 @@ struct YearlyFortuneReducer {
     
     var title: String { rewardFortuneDetail?.title ?? "" }
     var scoreInfo: YearlyFortune.FortuneScore? { rewardFortuneDetail?.scoreInfo }
-    var cardInfo: YearlyFortune.FortuneCard? { rewardFortuneDetail?.cardInfo }
+    var cardInfo: FortuneCard? { rewardFortuneDetail?.cardInfo }
     var overallFortune: YearlyFortune.OverallFortune? { rewardFortuneDetail?.overallFortune }
     var categoryFortuneItems: [YearlyFortune.CategoryFortuneItem] { rewardFortuneDetail?.categoryFortuneItems ?? [] }
     var elementBalance: YearlyFortune.ElementBalance? { rewardFortuneDetail?.elementBalance }
     var elementShift: YearlyFortune.ElementShift? { rewardFortuneDetail?.elementShift }
-    var tipInfos: [YearlyFortune.Tip] { rewardFortuneDetail?.tipInfos ?? [] }
+    var tipInfos: [Tip] { rewardFortuneDetail?.tipInfos ?? [] }
 
     init(type: YearlyFortuneType) {
       self.type = type

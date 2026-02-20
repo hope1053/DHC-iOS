@@ -17,14 +17,14 @@ struct FortuneLoadingCompleteReducer {
   struct State: Equatable {
     var isCardFlipped: Bool
     let scoreInfo: FortuneDetail.FortuneScore
-    let cardInfo: FortuneDetail.FortuneCard
+    let cardInfo: FortuneCard
     let missionResult: MissionResult?
     var presentMissionResultPopup: Bool
 
     init(
       isCardFlipped: Bool = false,
       scoreInfo: FortuneDetail.FortuneScore,
-      cardInfo: FortuneDetail.FortuneCard,
+      cardInfo: FortuneCard,
       missionResult: MissionResult? = nil
     ) {
       self.isCardFlipped = isCardFlipped

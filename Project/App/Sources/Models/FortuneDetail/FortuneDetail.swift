@@ -19,18 +19,6 @@ struct FortuneDetail: Equatable {
     let score: Int
     let summary: String
   }
-  struct FortuneCard: Equatable {
-    let backgroundImageURL: URL?
-    let title: String
-    let fortune: String
-  }
-
-  struct Tip: Equatable, Hashable {
-    let imageURL: URL?
-    let title: String
-    let content: String
-    let contentColor: Color?
-  }
 }
 
 extension FortuneDetail {
