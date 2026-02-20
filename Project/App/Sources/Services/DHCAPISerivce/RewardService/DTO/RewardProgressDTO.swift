@@ -79,7 +79,7 @@ extension RewardItemDTO {
       id: id,
       title: title,
       type: type,
-      iconURL: isUnlocked ? URL.urlForResource(.lock) : URL(string: iconURL),
+      iconURL: isUnlocked && isUsed ? URL(string: iconURL) : URL.urlForResource(.lock),
       message: message,
       isUsed: isUsed
     )
