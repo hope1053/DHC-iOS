@@ -86,6 +86,12 @@ struct RewardView: View {
       switch store.case {
       case .yearlyFortune(let store):
         YearlyFortuneView(store: store)
+      case .fortuneLoading(let store):
+        FortuneLoadingView(
+          store: store,
+          badgeText: "프리미엄 운세",
+          loadingMessage: "전반적인 운세를 카드에 담고 있어요.."
+        )
       }
     }
   }

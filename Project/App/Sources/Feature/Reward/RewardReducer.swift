@@ -45,6 +45,8 @@ struct RewardReducer {
     // Internal Action
     case fetchRewardProgress
     case fetchRewardProgressResponse(Result<RewardInfo, Error>)
+    case createYearlyFortune
+    case createYearlyFortuneResponse(Result<Void, Error>)
     case showToast(ToastType)
     
     // Route Action
@@ -55,6 +57,7 @@ struct RewardReducer {
   @Reducer
   enum Path {
     case yearlyFortune(YearlyFortuneReducer)
+    case fortuneLoading(FortuneLoadingReducer)
   }
   
   @Dependency(\.rewardClient) var rewardClient
@@ -89,7 +92,37 @@ struct RewardReducer {
         guard case .openable? = state.rewardInfo?.rewardStatus else {
           return .none
         }
-        return .send(.moveToYearlyFortune(type: .detail))
+        return .send(.createYearlyFortune)
+
+      case .createYearlyFortune:
+        state.path.append(.fortuneLoading(FortuneLoadingReducer.State()))
+        return .run { [rewardClient] send in
+          await send(
+            .createYearlyFortuneResponse(
+              Result {
+                try await rewardClient.createYearlyFortune()
+              }
+            )
+          )
+        }
+
+      case .createYearlyFortuneResponse(.success):
+        if let lastPath = state.path.last, case .fortuneLoading = lastPath {
+          state.path.removeLast()
+        }
+        return .merge(
+          .send(.fetchRewardProgress),
+          .send(.moveToYearlyFortune(type: .detail))
+        )
+
+      case .createYearlyFortuneResponse(.failure(let error)):
+        if let lastPath = state.path.last, case .fortuneLoading = lastPath {
+          state.path.removeLast()
+        }
+        state.toastType = .textWithCheck("리워드 생성에 실패했어요")
+        state.isToastPresented = true
+        print("Failed to create yearly fortune: \(error)")
+        return .none
         
       case .onWhatIsRewardButtonTapped:
         return .send(.moveToYearlyFortune(type: .sample))
