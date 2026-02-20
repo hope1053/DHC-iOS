@@ -13,6 +13,7 @@ import ComposableArchitecture
 struct RewardClient {
   var fetchRewardProcess: @Sendable () async throws -> RewardInfo
   var createYearlyFortune: @Sendable () async throws -> Void
+  var fetchYearlyFortune: @Sendable () async throws -> YearlyFortune
 }
 
 extension RewardClient: DependencyKey {
@@ -28,6 +29,12 @@ extension RewardClient: DependencyKey {
       },
       createYearlyFortune: {
         _ = try await networkManager.request(RewardAPI.createYearlyFortune)
+      },
+      fetchYearlyFortune: {
+        try await networkManager
+          .request(RewardAPI.yearlyFortune)
+          .map(to: YearlyFortuneDTO.self)
+          .toDomain
       }
     )
   }()

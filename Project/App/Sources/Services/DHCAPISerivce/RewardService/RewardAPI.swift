@@ -12,6 +12,7 @@ import Alamofire
 enum RewardAPI {
   case rewardProgress
   case createYearlyFortune
+  case yearlyFortune
 }
 
 extension RewardAPI: RequestTarget {
@@ -21,6 +22,8 @@ extension RewardAPI: RequestTarget {
       "/view/users/{userID}/reward-progress"
     case .createYearlyFortune:
       "/api/users/{userID}/yearly-fortune"
+    case .yearlyFortune:
+      "/view/users/{userID}/yearly-fortune"
     }
   }
 
@@ -30,6 +33,8 @@ extension RewardAPI: RequestTarget {
       .get
     case .createYearlyFortune:
       .post
+    case .yearlyFortune:
+      .get
     }
   }
 
@@ -39,6 +44,8 @@ extension RewardAPI: RequestTarget {
       nil
     case .createYearlyFortune:
       nil
+    case .yearlyFortune:
+      nil
     }
   }
 
@@ -47,6 +54,8 @@ extension RewardAPI: RequestTarget {
     case .rewardProgress:
       nil
     case .createYearlyFortune:
+      nil
+    case .yearlyFortune:
       nil
     }
   }
