@@ -11,7 +11,7 @@ import ComposableArchitecture
 
 enum RewardDetailType: Equatable {
   case sample
-  case detail(id: Int)
+  case detail
 }
 
 @Reducer
@@ -63,11 +63,11 @@ struct RewardDetailReducer {
         
       case .fetchRewardDetail:
         switch state.type {
-        case .detail(let id):
+        case .detail:
           // TODO: API Client 구현 시 실제 네트워크 호출로 대체
           // return .run { send in
           //   do {
-          //     let rewardDetail = try await rewardAPIClient.fetchRewardDetail(id)
+          //     let rewardDetail = try await rewardAPIClient.fetchRewardDetail()
           //     await send(.rewardDetailResponse(rewardDetail))
           //   } catch {
           //     await send(.rewardDetailError(error))

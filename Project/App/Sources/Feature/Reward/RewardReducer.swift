@@ -11,7 +11,7 @@ import ComposableArchitecture
 
 enum ReceivedRewardAction {
   case showToast(String)
-  case moveToDetailView(Int)
+  case moveToDetailView(type: RewardItemType, isUsed: Bool)
 }
 
 @Reducer
@@ -86,7 +86,7 @@ struct RewardReducer {
         return .none
         
       case .onOpenRewardButtonTapped:
-        return .send(.moveToRewardDetail(type: .detail(id: 0)))
+        return .send(.moveToRewardDetail(type: .detail))
         
       case .onWhatIsRewardButtonTapped:
         return .send(.moveToRewardDetail(type: .sample))
@@ -97,8 +97,8 @@ struct RewardReducer {
         
       case .onRewardItemTapped(let action):
         switch action {
-        case .moveToDetailView(let id):
-          return .send(.moveToRewardDetail(type: .detail(id: id)))
+        case .moveToDetailView(let type, let isUsed):
+          return .send(.moveToRewardDetail(type: .detail))
         case .showToast(let toastMessage):
           state.toastType = .imageAndText(ImageResource.Icon.gift.image, toastMessage)
           state.isToastPresented = true
