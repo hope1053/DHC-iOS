@@ -34,7 +34,7 @@ struct UserProgressInfoDTO: Decodable {
     let rewardLevel: RewardLevelDTO
     let totalPoint: Int
     let currentLevelPoint: Int
-    let nextLevelRequiredPoint: Int
+    let nextLevelRequiredPoint: Int?
 
     enum CodingKeys: String, CodingKey {
         case rewardImageURL = "rewardImageUrl"
@@ -45,13 +45,13 @@ struct UserProgressInfoDTO: Decodable {
 extension UserProgressInfoDTO {
   var toDomain: RewardInfo.UserProgressInfo {
     .init(
-      currentPoints: currentLevelPoint,
+      currentPoints: totalPoint,
       currentLevel: .init(
         level: rewardLevel.level,
         name: rewardLevel.name,
         imageURL: URL(string: rewardImageURL)
       ),
-      pointsToNextLevel: nextLevelRequiredPoint
+      pointsToNextLevel: nextLevelRequiredPoint ?? 0
     )
   }
 }
