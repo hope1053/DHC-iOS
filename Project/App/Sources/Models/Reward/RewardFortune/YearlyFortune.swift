@@ -85,7 +85,7 @@ extension YearlyFortune {
       scoreInfo: .init(
         fortuneTitle: date,
         scoreString: "79점 (예시데이터)",
-        score: 79,
+        score: 70, // 색상 고정을 위해 예시 데이터에서만 점수 다르게 설정,
         summary: "올 한해는 전반적으로 마음이 들뜨는 날이에요,\n한템포 쉬어가요."
       ),
       cardInfo: .init(

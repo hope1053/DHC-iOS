@@ -105,6 +105,7 @@ struct TooltipView: View {
         view.frame(maxWidth: .infinity)
       }
       .padding(.horizontal, 2)
+      .multilineTextAlignment(.center)
   }
   
   private var bottomArrowView: some View {
