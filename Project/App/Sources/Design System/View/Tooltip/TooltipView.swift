@@ -93,14 +93,24 @@ struct TooltipView: View {
   private var contentView: some View {
     textView
       .padding(10)
-      .background(type.backgroundColor)
-      .clipShape(RoundedRectangle(cornerRadius: 8))
+      .background {
+        switch type {
+        case .rewardGradient:
+          ChromeMaterialBlurView(style: .systemUltraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+        default:
+          RoundedRectangle(cornerRadius: 8)
+            .fill(type.backgroundColor)
+        }
+      }
   }
   
   private var textView: some View {
     Text(message)
       .textStyle(type.typography)
       .foregroundStyle(type.foregroundColor)
+      .lineLimit(nil)
+      .fixedSize(horizontal: false, vertical: true)
       .if(expandWidth) { view in
         view.frame(maxWidth: .infinity)
       }
@@ -109,8 +119,16 @@ struct TooltipView: View {
   }
   
   private var bottomArrowView: some View {
-    BottomRoundedInvertedTriangle(cornerRadius: 1)
-      .fill(type.bottomArrowBackgroundColor)
-      .frame(width: 12, height: 6)
+    Group {
+      switch type {
+      case .rewardGradient:
+        ChromeMaterialBlurView(style: .systemUltraThinMaterial)
+          .mask(BottomRoundedInvertedTriangle(cornerRadius: 1))
+      default:
+        BottomRoundedInvertedTriangle(cornerRadius: 1)
+          .fill(type.bottomArrowBackgroundColor)
+      }
+    }
+    .frame(width: 12, height: 6)
   }
 }

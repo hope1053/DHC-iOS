@@ -111,13 +111,31 @@ struct RewardView: View {
       }
       
       Button {
-        store.send(.infoButtonTapped)
+        withAnimation(.easeInOut(duration: 0.2)) {
+          _ = store.send(.infoButtonTapped)
+        }
       } label: {
         Image(.Icon.info)
           .resizable()
           .renderingMode(.template)
           .frame(width: 20, height: 20)
           .foregroundStyle(ColorResource.Neutral._400.color)
+      }
+    }
+    .frame(maxWidth: .infinity)
+    .overlay(alignment: .top) {
+      if store.isInfoTooltipVisible {
+        TooltipView(
+          type: .rewardGradient,
+          message: """
+          경험치를 모아 복주머니 레벨을 올리면
+          1년 운세를 볼 수 있어요
+          """,
+          expandWidth: true
+        )
+        .padding(.horizontal, 12)
+        .transition(.opacity)
+        .offset(y: -74)
       }
     }
     .padding(.bottom, 20)

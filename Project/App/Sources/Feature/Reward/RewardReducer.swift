@@ -24,6 +24,7 @@ struct RewardReducer {
     var rewardInfo: RewardInfo?
     var toastType: ToastType = .textWithCheck("")
     var isToastPresented: Bool = false
+    var isInfoTooltipVisible: Bool = false
     
     var userProgressInfo: RewardInfo.UserProgressInfo? {
       rewardInfo?.userProgressInfo
@@ -128,7 +129,7 @@ struct RewardReducer {
         return .send(.moveToYearlyFortune(type: .sample))
         
       case .infoButtonTapped:
-        // TODO: 정보 버튼 액션 구현
+        state.isInfoTooltipVisible.toggle()
         return .none
         
       case .onRewardItemTapped(let action):
