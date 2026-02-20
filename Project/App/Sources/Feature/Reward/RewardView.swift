@@ -8,6 +8,7 @@
 import SwiftUI
 
 import ComposableArchitecture
+import SDWebImageSwiftUI
 
 struct RewardView: View {
   @Bindable var store: StoreOf<RewardReducer>
@@ -24,8 +25,14 @@ struct RewardView: View {
         
         ScrollView {
           VStack(spacing: 0) {
-            placeholderGraphic
-              .padding(.bottom, 25)
+            WebImage(url: store.userProgressInfo?.currentLevel.imageURL) { image in
+              image.resizable()
+            } placeholder: {
+              EmptyView()
+            }
+            .frame(width: 132, height: 145)
+            .padding(.top, 19)
+            .padding(.bottom, 25)
             
             headerView
             .padding(.bottom, 40)
@@ -80,15 +87,6 @@ struct RewardView: View {
         YearlyFortuneView(store: store)
       }
     }
-  }
-  
-  private var placeholderGraphic: some View {
-    VStack {
-      Text("그래픽 (변경예정)")
-        .textStyle(.body3)
-        .foregroundStyle(ColorResource.Neutral._500.color)
-    }
-    .frame(height: 120)
   }
   
   var headerView: some View {
