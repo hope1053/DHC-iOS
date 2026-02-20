@@ -69,8 +69,8 @@ struct MainTabReducer {
         return .none
       case .rewardTab:
         return .none
-      case .myPageTab:
-        return .none
+      case .myPageTab(let action):
+        return handleMyPageTabAction(state: &state, action: action)
       case .selectedTabChanged(let tabKind):
         state.selectedTab = tabKind
         return .none
@@ -78,6 +78,16 @@ struct MainTabReducer {
     }
     .ifLet(\.homeTab, action: \.homeTab) {
       HomeReducer()
+    }
+  }
+  
+  private func handleMyPageTabAction(state: inout State, action: MyPageReducer.Action) -> Effect<Action> {
+    switch action {
+    case .delegate(.moveToHomeTab):
+      state.selectedTab = .home
+      return .none
+    default:
+      return .none
     }
   }
 }

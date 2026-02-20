@@ -13,9 +13,13 @@ import ComposableArchitecture
 struct MyPageReducer {
   @Dependency(\.myPageClient) var myPageClient
   @Dependency(\.dateFormatterCache) var dateFormatterCache
+  @Dependency(\.shareClient) var shareClient
+  @Dependency(\.userManager) var userManager
+  @Dependency(\.webViewService) var webViewService
 
   @ObservableState
   struct State: Equatable {
+    var path = StackState<Path.State>()
     var myPageInfo: MyPageInfo
     var isLoading = false
     var isRedacted = false
@@ -31,6 +35,7 @@ struct MyPageReducer {
     case onAppear
     case resetAppButtonTapped
     case fortuneTestRowTapped(url: URL?)
+    case presentWebView(URL)
 
     // Internal Actions
     case fetchMyPageData
@@ -38,11 +43,18 @@ struct MyPageReducer {
     case myPageDataFailed(Error)
 
     /// Navigation Actions
+    case path(StackActionOf<Path>)
     case appResetAlert(PresentationAction<AppResetAlertReducer.Action>)
     case delegate(Delegate)
     enum Delegate {
       case moveToRootView
+      case moveToHomeTab
     }
+  }
+  
+  @Reducer
+  enum Path {
+    case webView(DHCWebReducer)
   }
 
   var body: some ReducerOf<Self> {
@@ -60,6 +72,33 @@ struct MyPageReducer {
         return .none
         
       case .fortuneTestRowTapped(let url):
+        guard let url else {
+          return .none
+        }
+        
+        guard let userId = userManager.getUserID() else {
+          return .send(.presentWebView(url))
+        }
+        
+        return .run { [shareClient, webViewService] send in
+          do {
+            let shareCode = try await shareClient.createShareCode(userId)
+            
+            if let domain = url.host {
+              await webViewService.setCookie("shareToken", shareCode, domain)
+            } else {
+              debugPrint("⚠️ [Share] URL domain을 추출할 수 없음: \(url)")
+            }
+            
+            await send(.presentWebView(url))
+          } catch {
+            debugPrint("❌ [Share] shareCode 생성 실패: \(error)")
+            await send(.presentWebView(url))
+          }
+        }
+        
+      case .presentWebView(let url):
+        state.path.append(.webView(DHCWebReducer.State(url: url)))
         return .none
 
       case .fetchMyPageData:
@@ -96,10 +135,23 @@ struct MyPageReducer {
       case .appResetAlert:
         return .none
 
+      case let .path(action):
+        switch action {
+        case .element(id: _, action: .webView(.delegate(.close))):
+          state.path.removeLast()
+          return .none
+        case .element(id: _, action: .webView(.delegate(.navigateToMain))):
+          state.path.removeLast()
+          return .send(.delegate(.moveToHomeTab))
+        default:
+          return .none
+        }
+
       case .delegate:
         return .none
       }
     }
+    .forEach(\.path, action: \.path)
     .ifLet(\.$appResetAlert, action: \.appResetAlert) {
       AppResetAlertReducer()
     }
@@ -139,3 +191,5 @@ struct MyPageReducer {
     return myPageInfo
   }
 }
+
+extension MyPageReducer.Path.State: Equatable {}
