@@ -58,8 +58,7 @@ struct ReceivedRewardView: View {
               } else {
                 // message가 없으면 상세 화면으로 이동
                 onRewardItemTapped(.moveToDetailView(
-                  type: reward.type,
-                  isUsed: reward.isUsed
+                  type: reward.type
                 ))
               }
             }

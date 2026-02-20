@@ -17,22 +17,19 @@ struct RewardItem: Identifiable, Equatable {
   let type: RewardItemType
   let iconURL: URL?
   let message: String?
-  let isUsed: Bool
   
   init(
     id: Int,
     title: String,
     type: RewardItemType,
     iconURL: URL?,
-    message: String?,
-    isUsed: Bool
+    message: String?
   ) {
     self.id = id
     self.title = title
     self.type = type
     self.iconURL = iconURL
     self.message = message
-    self.isUsed = isUsed
   }
 }
 
