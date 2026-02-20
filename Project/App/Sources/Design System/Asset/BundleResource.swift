@@ -26,6 +26,7 @@ extension URL {
     case splashLottie
     case onboardingVideo
     case fortuneLoadingVideo
+    case lock
   }
   
   static func urlForResource(_ resource: Resource) -> URL? {
@@ -64,6 +65,8 @@ extension URL {
       return Bundle.main.url(forResource: "onboardingVideo", withExtension: "mp4")
     case .fortuneLoadingVideo:
       return Bundle.main.url(forResource: "fortuneLoading", withExtension: "mp4")
+    case .lock:
+      return Bundle.main.url(forResource: "lock", withExtension: "png")
     }
   }
 }
