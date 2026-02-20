@@ -51,6 +51,17 @@ struct RewardProgressCardView: View {
       return false
     }
   }
+
+  private var tooltipMessage: String {
+    switch rewardStatus {
+    case .openable:
+      return "Goal에 도달했어요 리워드를 확인해보세요!"
+    case .opened:
+      return "곧 새로운 보상이 오픈 될 예정이에요!"
+    case .notOpened:
+      return "다음 레벨까지 \(pointsToNextLevel)pt 남았어요"
+    }
+  }
   
   private var milestones: [Milestone] {
     (1...totalSteps).map { level in
@@ -122,7 +133,7 @@ struct RewardProgressCardView: View {
       // 툴팁
       TooltipView(
         type: .rewardGradient,
-        message: "다음 레벨까지 \(pointsToNextLevel)pt 남았어요",
+        message: tooltipMessage,
         expandWidth: true
       )
       .frame(maxWidth: .infinity)
