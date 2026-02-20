@@ -45,6 +45,7 @@ struct RewardView: View {
                   currentPoints: userInfo.currentPoints,
                   pointsToNextLevel: userInfo.pointsToNextLevel,
                   currentLevel: userInfo.currentLevel,
+                  rewardStatus: rewardInfo.rewardStatus,
                   totalSteps: rewardInfo.totalLevel,
                   onOpenRewardButtonTapped: {
                     store.send(.onOpenRewardButtonTapped)

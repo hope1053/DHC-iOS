@@ -86,6 +86,9 @@ struct RewardReducer {
         return .none
         
       case .onOpenRewardButtonTapped:
+        guard case .openable? = state.rewardInfo?.rewardStatus else {
+          return .none
+        }
         return .send(.moveToYearlyFortune(type: .detail))
         
       case .onWhatIsRewardButtonTapped:

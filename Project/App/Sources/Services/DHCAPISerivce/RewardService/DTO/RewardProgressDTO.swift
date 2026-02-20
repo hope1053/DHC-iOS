@@ -20,9 +20,17 @@ struct RewardProgressDTO: Decodable {
 
 extension RewardProgressDTO {
   var toDomain: RewardInfo {
-    .init(
+    let rewardStatus: RewardStatus = rewardList.first.map { firstItem in
+      guard firstItem.isUnlocked else {
+        return .notOpened
+      }
+      return firstItem.isUsed ? .opened : .openable
+    } ?? .notOpened
+    
+    return .init(
       userProgressInfo: userProgressInfo.toDomain,
-      totalLevel: 8, // TODO: 현재는 클라에서 총 레벨 관리하는걸로 유지, 추후 서버에서 총 레벨 내려줘야하는 경우 수정 필요
+      totalLevel: 8, // TODO: 현재는 클라에서 총 레벨 관리하는걸로 유지, 추후 서버에서 총 레벨 내려줘야하는 경우 수정 필요,
+      rewardStatus: rewardStatus,
       receivedRewards: rewardList.map { $0.toDomain }
     )
   }

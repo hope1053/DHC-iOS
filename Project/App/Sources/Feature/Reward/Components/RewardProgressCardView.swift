@@ -11,6 +11,7 @@ struct RewardProgressCardView: View {
   private let currentPoints: Int
   private let pointsToNextLevel: Int
   private let currentLevel: LevelInfo
+  private let rewardStatus: RewardStatus
   private let totalSteps: Int
   private let onOpenRewardButtonTapped: () -> Void
   private let onWhatIsRewardButtonTapped: () -> Void
@@ -19,6 +20,7 @@ struct RewardProgressCardView: View {
     currentPoints: Int,
     pointsToNextLevel: Int,
     currentLevel: LevelInfo,
+    rewardStatus: RewardStatus,
     totalSteps: Int,
     onOpenRewardButtonTapped: @escaping () -> Void,
     onWhatIsRewardButtonTapped: @escaping () -> Void
@@ -26,9 +28,28 @@ struct RewardProgressCardView: View {
     self.currentPoints = currentPoints
     self.pointsToNextLevel = pointsToNextLevel
     self.currentLevel = currentLevel
+    self.rewardStatus = rewardStatus
     self.totalSteps = totalSteps
     self.onOpenRewardButtonTapped = onOpenRewardButtonTapped
     self.onWhatIsRewardButtonTapped = onWhatIsRewardButtonTapped
+  }
+
+  private var rewardButtonTitle: String {
+    switch rewardStatus {
+    case .opened:
+      return "리워드 수령 완료"
+    case .openable, .notOpened:
+      return "리워드 열기"
+    }
+  }
+
+  private var isRewardButtonEnabled: Bool {
+    switch rewardStatus {
+    case .openable:
+      return true
+    case .opened, .notOpened:
+      return false
+    }
   }
   
   private var milestones: [Milestone] {
@@ -52,10 +73,10 @@ struct RewardProgressCardView: View {
       CTAButton(
         size: .large,
         style: .primary,
-        title: "리워드 열기",
+        title: rewardButtonTitle,
         action: onOpenRewardButtonTapped
       )
-//      .disabled(true)
+      .disabled(!isRewardButtonEnabled)
       
       Text("리워드는 뭔가요? >")
         .frame(maxWidth: .infinity)
