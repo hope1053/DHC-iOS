@@ -91,12 +91,12 @@ extension YearlyFortune {
       ),
       cardInfo: .init(
         backgroundImageURL: URL.urlForResource(.fortuneCardFrontDefaultView),
-        title: "최고의 날",
-        fortune: "네잎클로버"
+        title: "조용한 날",
+        fortune: "조용한 호랑이"
       ),
       overallFortune: .init(
-        title: "전반적인 운세 타이틀",
-        fortune: "오늘은 지갑을 더 단단히 쥐고 계셔야겠어요. 괜히 시선 가는 거 많고, 충동구매가 살짝 걱정되는 날이에요. 꼭 필요한 소비인지 한 번만 더 생각해보면, 내일의 나에게 분명 고마워할 거예요. 행운의 색인 연두색이 들어간 소품을 곁에 두면 조금 더 차분한 하루가 될지도 몰라요."
+        title: "운세",
+        fortune: "이번 달은 마음이 한층 단단해지는 시기예요. 불필요한 걱정에 에너지를 쓰기보단, 지금 눈앞의 상황에 집중하면 일이 자연스럽게 풀려갑니다. 충동적인 선택이 아니라 조금 더 생각하고 결정하는 것만으로도 내일의 나에게 분명 고마운 한 달이 될 거예요."
       ),
       categoryFortuneItems: [
         CategoryFortuneItem(
@@ -160,7 +160,7 @@ extension YearlyFortune {
         ]
       ),
       elementShift: .init(
-        title: "올해의 기운 변화 타이틀",
+        title: "기운 변화",
         description: """
         화의 기운은
         ‘결단력・집중・주체성’을 밝히는 에너지예요.
