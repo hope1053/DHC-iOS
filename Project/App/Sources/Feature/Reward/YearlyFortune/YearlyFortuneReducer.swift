@@ -26,7 +26,7 @@ struct YearlyFortuneReducer {
     let type: YearlyFortuneType
     var rewardFortuneDetail: YearlyFortune?
     
-    var title: String { rewardFortuneDetail?.title ?? "" }
+    var title: String { rewardFortuneDetail?.navigationTitle ?? "" }
     var scoreInfo: YearlyFortune.FortuneScore? { rewardFortuneDetail?.scoreInfo }
     var cardInfo: FortuneCard? { rewardFortuneDetail?.cardInfo }
     var overallFortune: YearlyFortune.OverallFortune? { rewardFortuneDetail?.overallFortune }
@@ -75,7 +75,7 @@ struct YearlyFortuneReducer {
           }
           
         case .sample:
-          state.rewardFortuneDetail = .sample(date: dateFormatterCache.formatter(for: "yyyy년 MM월 dd일").string(from: Date()))
+          state.rewardFortuneDetail = .sample(date: dateFormatterCache.formatter(for: "yyyy").string(from: Date()))
           return .none
         }
         
@@ -86,7 +86,7 @@ struct YearlyFortuneReducer {
       case .rewardDetailError(let error):
         print("Failed to fetch yearly fortune detail: \(error)")
         state.rewardFortuneDetail = .sample(
-          date: dateFormatterCache.formatter(for: "yyyy년 MM월 dd일").string(from: Date())
+          date: dateFormatterCache.formatter(for: "yyyy").string(from: Date())
         )
         return .none
       }

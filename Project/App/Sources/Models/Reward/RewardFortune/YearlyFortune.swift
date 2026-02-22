@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct YearlyFortune: Equatable {
-  let title: String
+  let navigationTitle: String
   let scoreInfo: FortuneScore
   let cardInfo: FortuneCard
   let overallFortune: OverallFortune
@@ -20,7 +20,7 @@ struct YearlyFortune: Equatable {
 
 extension YearlyFortune {
   struct FortuneScore: Equatable {
-    var fortuneTitle: String
+    var badgeTitle: String
     let scoreString: String
     let score: Int
     let summary: String
@@ -66,6 +66,7 @@ extension YearlyFortune {
     struct ElementBalanceItem: Equatable, Identifiable {
       var id: String { element }
       let element: String
+      let elementStatus: String
       let percentage: Double
       let color: Color
       let imageURL: URL?
@@ -81,9 +82,9 @@ extension YearlyFortune {
 extension YearlyFortune {
   static func sample(date: String) -> YearlyFortune {
     YearlyFortune(
-      title: "리워드는 뭔가요?",
+      navigationTitle: "리워드는 뭔가요?",
       scoreInfo: .init(
-        fortuneTitle: date,
+        badgeTitle: "\(date)년 운세 총평",
         scoreString: "79점 (예시데이터)",
         score: 70, // 색상 고정을 위해 예시 데이터에서만 점수 다르게 설정,
         summary: "올 한해는 전반적으로 마음이 들뜨는 날이에요,\n한템포 쉬어가요."
@@ -122,31 +123,36 @@ extension YearlyFortune {
         ),
         balanceItem: [
           .init(
-            element: "적정",
+            element: "tree",
+            elementStatus: "적정",
             percentage: 0.2,
             color: ColorResource.Green._100.color,
             imageURL: URL.urlForResource(.tree)
           ),
           .init(
-            element: "과다",
+            element: "fire",
+            elementStatus: "과다",
             percentage: 0.4,
             color: ColorResource.Red._100.color,
             imageURL: URL.urlForResource(.fire)
           ),
           .init(
-            element: "적정",
+            element: "soil",
+            elementStatus: "적정",
             percentage: 0.3,
             color: ColorResource.Green._100.color,
             imageURL: URL.urlForResource(.soil)
           ),
           .init(
-            element: "적정",
+            element: "gold",
+            elementStatus: "적정",
             percentage: 0.2,
             color: ColorResource.Green._100.color,
             imageURL: URL.urlForResource(.gold)
           ),
           .init(
-            element: "부족",
+            element: "water",
+            elementStatus: "부족",
             percentage: 0.1,
             color: ColorResource.Violet._500.color,
             imageURL: URL.urlForResource(.water)

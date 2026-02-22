@@ -84,7 +84,7 @@ struct ElementBalanceView: View {
         .frame(width: 24, height: 24)
       }
       
-      Text(item.element)
+      Text(item.elementStatus)
         .textStyle(.body4)
         .foregroundStyle(ColorResource.Text.Body.primary.color)
     }

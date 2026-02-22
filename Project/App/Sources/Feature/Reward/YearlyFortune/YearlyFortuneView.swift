@@ -47,7 +47,7 @@ struct YearlyFortuneView: View {
             }
             
             FortuneView(
-              title: scoreInfo.fortuneTitle,
+              title: scoreInfo.badgeTitle,
               score: scoreInfo.scoreString,
               summary: scoreInfo.summary,
               gradientType: FortuneScore(score: scoreInfo.score).textGradient,
