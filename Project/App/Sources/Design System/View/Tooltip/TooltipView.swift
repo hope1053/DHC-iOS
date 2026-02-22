@@ -110,7 +110,7 @@ struct TooltipView: View {
       .textStyle(type.typography)
       .foregroundStyle(type.foregroundColor)
       .lineLimit(nil)
-      .fixedSize(horizontal: false, vertical: true)
+      .fixedSize(horizontal: true, vertical: true)
       .if(expandWidth) { view in
         view.frame(maxWidth: .infinity)
       }
