@@ -120,9 +120,6 @@ struct HomeView: View {
       scaleEffectX: 1.8
     )
     .background(ColorResource.Background.main.color)
-    .onAppear {
-      store.send(.onAppear)
-    }
     .adaptiveBottomSheet(
       isPresented: $store.presentBottomSheet.sending(\.presentBottomSheet)
     ) {

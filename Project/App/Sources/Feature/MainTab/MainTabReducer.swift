@@ -50,6 +50,9 @@ struct MainTabReducer {
     Reduce { state, action in
       switch action {
       case .onAppear:
+        guard state.homeTab == nil else {
+          return .none
+        }
         let isFirstLaunch = launchManager.isFirstLaunchOfToday()
         state.homeTab = HomeReducer.State(homeInfo: .sample, isFirstLaunchOfToday: isFirstLaunch)
         return .none
