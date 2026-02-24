@@ -164,24 +164,6 @@ struct MissionProgressView: View, Equatable {
         currentLevel: completedMissionCount,
         milestones: steps
       )
-      
-      if isAllMissionCompleted {
-        HStack(spacing: 8) {
-          CTAButton(
-            size: .large,
-            style: .secondary,
-            title: "모은 리워드보기",
-            action: showCollectedRewardButtonTapped
-          )
-          
-          CTAButton(
-            size: .large,
-            style: .primary,
-            title: "리워드 받기",
-            action: getRewardButtonTapped
-          )
-        }
-      }
     }
     .padding(.vertical, 20)
     .padding(.horizontal, 16)
