@@ -122,7 +122,7 @@ struct MissionProgressView: View, Equatable {
   }
   
   private var headerDescription: String {
-    guard let missionResult else {
+    let completedMissionDescription = {
       switch completedMissionCount {
       case 0:
         return "단 \(totalMissionCount)개만 도전해 보세요"
@@ -135,6 +135,10 @@ struct MissionProgressView: View, Equatable {
       default:
         return "단 \(totalMissionCount)개만 도전해 보세요"
       }
+    }() 
+    
+    guard let missionResult else {
+      return completedMissionDescription
     }
     
     switch missionResult {
@@ -148,18 +152,7 @@ struct MissionProgressView: View, Equatable {
     case .fewDaysFail:
       return "오늘은 리워드 보상이 4배에요!"
     case .todaySuccess, .yesterDaySuccess:
-      switch completedMissionCount {
-      case 0:
-        return "단 \(totalMissionCount)개만 도전해 보세요"
-      case 1:
-        return "벌써 한개나 성공했네요!"
-      case 2:
-        return "리워드까지 한 걸음 남았어요!"
-      case 3:
-        return "리워드를 받아보세요!"
-      default:
-        return "단 \(totalMissionCount)개만 도전해 보세요"
-      }
+      return completedMissionDescription
     }
   }
   
