@@ -68,6 +68,7 @@ struct HomeView: View {
           remainingSeconds: store.remainingSeconds,
           completedMissionCount: store.completedMissionCount,
           missionResult: store.todayMissionResult,
+          state: store.homeInfo.isTodayMissionDone ? .disable : .able, // TODO: state 판단 기준 추후 API 추가되면 수정 필요
           didTapRewardButton: {
             store.send(.rewardButtonTapped)
           }

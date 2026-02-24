@@ -7,28 +7,37 @@
 
 import SwiftUI
 
+enum TodayMissionState: Equatable {
+  case able
+  case disable
+}
+
 struct TodayMissionView: View, Equatable {
   private let remainingSeconds: Int
   private let completedMissionCount: Int
   private let missionResult: MissionResult?
+  private let state: TodayMissionState
   private let didTapRewardButton: () -> Void
   
   init(
     remainingSeconds: Int,
     completedMissionCount: Int,
     missionResult: MissionResult? = nil,
+    state: TodayMissionState = .able,
     didTapRewardButton: @escaping () -> Void
   ) {
     self.remainingSeconds = remainingSeconds
     self.completedMissionCount = completedMissionCount
     self.missionResult = missionResult
+    self.state = state
     self.didTapRewardButton = didTapRewardButton
   }
   
   static func == (lhs: TodayMissionView, rhs: TodayMissionView) -> Bool {
     lhs.remainingSeconds == rhs.remainingSeconds &&
     lhs.completedMissionCount == rhs.completedMissionCount &&
-    lhs.missionResult == rhs.missionResult
+    lhs.missionResult == rhs.missionResult &&
+    lhs.state == rhs.state
   }
   
   var body: some View {
@@ -40,6 +49,7 @@ struct TodayMissionView: View, Equatable {
         completedMissionCount: completedMissionCount,
         totalMissionCount: 3,
         missionResult: missionResult,
+        state: state,
         onRewardTapped: didTapRewardButton
       )
       .equatable()
@@ -55,24 +65,28 @@ struct MissionProgressView: View, Equatable {
   private let completedMissionCount: Int
   private let totalMissionCount: Int
   private let missionResult: MissionResult?
+  private let state: TodayMissionState
   private let onRewardTapped: () -> Void
   
   init(
     completedMissionCount: Int,
     totalMissionCount: Int,
     missionResult: MissionResult? = nil,
+    state: TodayMissionState = .able,
     onRewardTapped: @escaping () -> Void
   ) {
     self.completedMissionCount = completedMissionCount
     self.totalMissionCount = totalMissionCount
     self.missionResult = missionResult
+    self.state = state
     self.onRewardTapped = onRewardTapped
   }
   
   static func == (lhs: MissionProgressView, rhs: MissionProgressView) -> Bool {
     lhs.completedMissionCount == rhs.completedMissionCount &&
     lhs.totalMissionCount == rhs.totalMissionCount &&
-    lhs.missionResult == rhs.missionResult
+    lhs.missionResult == rhs.missionResult &&
+    lhs.state == rhs.state
   }
   
   private var steps: [Milestone] {
@@ -108,6 +122,10 @@ struct MissionProgressView: View, Equatable {
   }
   
   private var headerDescription: String {
+    if state == .disable {
+      return "받은 리워드를 확인해보세요!"
+    }
+    
     let completedMissionDescription = {
       switch completedMissionCount {
       case 0:
@@ -148,12 +166,13 @@ struct MissionProgressView: View, Equatable {
       MilestoneProgressView(
         totalSteps: totalMissionCount,
         currentLevel: completedMissionCount,
-        milestones: steps
+        milestones: steps,
+        style: progressStyle
       )
     }
     .padding(.vertical, 20)
     .padding(.horizontal, 16)
-    .background(ColorResource.Neutral._800.color)
+    .background(backgroundColor)
     .clipShape(RoundedRectangle(cornerRadius: 20))
   }
   
@@ -173,11 +192,11 @@ struct MissionProgressView: View, Equatable {
         VStack(alignment: .leading, spacing: 4) {
           Text(headerTitle)
             .textStyle(.h5)
-            .foregroundStyle(ColorResource.Text.main.color)
+            .foregroundStyle(titleColor)
           
           Text(headerDescription)
             .textStyle(.body5)
-            .foregroundStyle(ColorResource.Text.Body.primary.color)
+            .foregroundStyle(descriptionColor)
         }
       }
       
@@ -193,6 +212,33 @@ struct MissionProgressView: View, Equatable {
         onRewardTapped()
       }
     }
+  }
+
+  private var progressStyle: MilestoneProgressView.Style {
+    switch state {
+    case .able:
+      return .default
+    case .disable:
+      return .init(
+        trackColor: ColorResource.Neutral._600.color,
+        fillColor: ColorResource.Neutral._500.color,
+        markerColor: ColorResource.Neutral._400.color,
+        highlightedLabelColor: ColorResource.Neutral._500.color,
+        normalLabelColor: ColorResource.Neutral._500.color
+      )
+    }
+  }
+  
+  private var titleColor: Color {
+    state == .able ? ColorResource.Text.main.color : ColorResource.Neutral._400.color
+  }
+  
+  private var descriptionColor: Color {
+    state == .able ? ColorResource.Text.Body.primary.color : ColorResource.Neutral._400.color
+  }
+  
+  private var backgroundColor: Color {
+    state == .able ? ColorResource.Neutral._800.color : ColorResource.Neutral._700.color
   }
 }
 

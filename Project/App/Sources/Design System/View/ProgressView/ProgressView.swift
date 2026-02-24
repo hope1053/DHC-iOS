@@ -32,18 +32,37 @@ struct Milestone {
 
 // MARK: - MilestoneProgressView
 struct MilestoneProgressView: View {
+  struct Style {
+    let trackColor: Color
+    let fillColor: Color
+    let markerColor: Color
+    let highlightedLabelColor: Color
+    let normalLabelColor: Color
+    
+    static let `default` = Style(
+      trackColor: ColorResource.Background.badgePrimary.color,
+      fillColor: ColorResource.Text.Highlights.primary.color,
+      markerColor: ColorResource.Text.Highlights.primary.color,
+      highlightedLabelColor: ColorResource.Text.Highlights.primary.color,
+      normalLabelColor: ColorResource.Neutral._500.color
+    )
+  }
+  
   private let totalSteps: Int
   private let currentLevel: Int
   private let milestones: [Milestone]
+  private let style: Style
   
   init(
     totalSteps: Int,
     currentLevel: Int,
-    milestones: [Milestone]
+    milestones: [Milestone],
+    style: Style = .default
   ) {
     self.totalSteps = totalSteps
     self.currentLevel = currentLevel
     self.milestones = milestones
+    self.style = style
   }
   
   // 진행도 계산 (0.0 ~ 1.0)
@@ -98,12 +117,12 @@ struct MilestoneProgressView: View {
       ZStack(alignment: .leading) {
         // Background track
         Capsule()
-          .fill(ColorResource.Background.badgePrimary.color)
+          .fill(style.trackColor)
           .frame(height: 12)
         
         // Filled track
         Capsule()
-          .fill(ColorResource.Text.Highlights.primary.color)
+          .fill(style.fillColor)
           .frame(width: max(28, filledWidth), height: 12)
         
         // Milestone markers (항상 4개, 균등 배치)
@@ -148,8 +167,8 @@ struct MilestoneProgressView: View {
       : currentLevel == milestone.level
     
     return isHighlighted
-      ? ColorResource.Text.Highlights.primary.color
-      : ColorResource.Neutral._500.color
+      ? style.highlightedLabelColor
+      : style.normalLabelColor
   }
   
   // Milestone 마커 생성
@@ -158,7 +177,7 @@ struct MilestoneProgressView: View {
     switch type {
     case .dot:
       Circle()
-        .fill(ColorResource.Text.Highlights.primary.color)
+        .fill(style.markerColor)
         .frame(width: 6, height: 6)
       
     case .image(let image):
