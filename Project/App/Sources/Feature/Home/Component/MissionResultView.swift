@@ -19,7 +19,9 @@ struct MissionResultView: View {
 
       content
 
-      image
+      if case .todaySuccess = type {
+        image
+      }
 
       button
     }
