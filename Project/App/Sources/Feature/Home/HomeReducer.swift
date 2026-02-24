@@ -38,7 +38,7 @@ struct HomeReducer {
     var homeInfo: HomeInfo
     var presentBottomSheet = false
     var presentMissionDonePopup = false
-    var popupType: MissionResult?
+    var todayMissionResult: MissionResult?
     var presentToast = false
     var testParticipation: TestParticipationReducer.State? = nil
 
@@ -173,7 +173,7 @@ struct HomeReducer {
 
       // MARK: - 팝업
     case .popupFirstButtonTapped:
-      guard let popupType = state.popupType else {
+      guard let popupType = state.todayMissionResult else {
         return .none
       }
       
@@ -189,7 +189,7 @@ struct HomeReducer {
       }
       
     case .popupSecondButtonTapped:
-      guard let popupType = state.popupType else {
+      guard let popupType = state.todayMissionResult else {
         return .none
       }
       
@@ -232,9 +232,9 @@ struct HomeReducer {
 
     case .todayMissionDoneResponse(let todayMissionStatus):
       if todayMissionStatus.isMissionSuccess {
-        state.popupType = .todaySuccess(earnedPoint: todayMissionStatus.earnedPoint)
+        state.todayMissionResult = .todaySuccess(earnedPoint: todayMissionStatus.earnedPoint)
       } else {
-        state.popupType = .todayFail
+        state.todayMissionResult = .todayFail
       }
       
       state.presentMissionDonePopup = true
@@ -320,13 +320,13 @@ struct HomeReducer {
     
     // pastMissionStatus를 MissionResult로 변환
     // 단, 이미 today 관련 popupType이 설정되어 있으면 덮어쓰지 않음
-    if case .todaySuccess = state.popupType {
+    if case .todaySuccess = state.todayMissionResult {
       // todayMissionDone 직후 fetchHomeData가 호출된 경우, today 상태 유지
-    } else if case .todayFail = state.popupType {
+    } else if case .todayFail = state.todayMissionResult {
       // todayMissionDone 직후 fetchHomeData가 호출된 경우, today 상태 유지
     } else {
       // 일반적인 경우, 서버의 pastMissionStatus로 업데이트
-      state.popupType = MissionResult(from: homeInfo.pastMissionStatus)
+      state.todayMissionResult = MissionResult(from: homeInfo.pastMissionStatus)
     }
     
     // 닫힌 버전 필터링: availableTest가 있고 해당 버전이 닫힌 버전에 없는 경우에만 표시

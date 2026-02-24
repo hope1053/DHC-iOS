@@ -67,7 +67,7 @@ struct HomeView: View {
         TodayMissionView(
           remainingSeconds: store.remainingSeconds,
           completedMissionCount: store.completedMissionCount,
-          missionResult: store.popupType,
+          missionResult: store.todayMissionResult,
           didTapRewardButton: {
             store.send(.rewardButtonTapped)
           }
@@ -142,7 +142,7 @@ struct HomeView: View {
       )
     }
     .popup(isPresented: $store.presentMissionDonePopup) {
-      if let popupType = store.popupType {
+      if let popupType = store.todayMissionResult {
         MissionResultView(
           type: popupType,
           onFirstButtonTapped: {
