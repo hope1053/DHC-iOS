@@ -77,7 +77,7 @@ extension LinearGradient {
       case .fortuneGradientMid:
         return [
           .init(color: ColorResource.Neutral._30.color, location: 0.17),
-          .init(color: ColorResource.Violet._500.color, location: 1.0),
+          .init(color: ColorResource.Violet._500.color, location: 1.0), 
         ]
       case .fortuneGradientTop:
         return [

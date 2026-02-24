@@ -34,7 +34,7 @@ struct CardInfoDTO: Decodable {
   let image: String
   let title, subTitle: String
   
-  var toDomain: FortuneDetail.FortuneCard {
+  var toDomain: FortuneCard {
     .init(
       backgroundImageURL: URL(string: image),
       title: title,
@@ -49,7 +49,7 @@ struct TipDTO: Decodable {
   let title, description: String
   let hexColor: String?
   
-  var toDomain: FortuneDetail.Tip {
+  var toDomain: Tip {
     .init(
       imageURL: URL(string: image),
       title: title,

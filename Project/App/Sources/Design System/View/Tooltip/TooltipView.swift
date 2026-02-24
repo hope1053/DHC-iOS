@@ -17,7 +17,7 @@ enum Tooltip {
     case .onboardingGradient:
       return AnyShapeStyle(LinearGradient(.tooltip01))
     case .rewardGradient:
-      return AnyShapeStyle(LinearGradient(.fortuneBorderLow).opacity(0.28))
+      return AnyShapeStyle(Color.clear)
     case .solid:
       return AnyShapeStyle(ColorResource.Neutral._500.color)
     }
@@ -25,8 +25,10 @@ enum Tooltip {
   
   var foregroundColor: Color {
     switch self {
-    case .onboardingGradient, .solid:
+    case .onboardingGradient:
       ColorResource.Background.main.color
+    case .solid:
+      ColorResource.Text.main.color
     case .rewardGradient:
       ColorResource.Text.Highlights.primary.color
     }
@@ -43,14 +45,7 @@ enum Tooltip {
         )
       )
     case .rewardGradient:
-      return AnyShapeStyle(
-        LinearGradient(
-          .fortuneBorderLow,
-          startPoint: .bottom,
-          endPoint: .top
-        )
-        .opacity(0.28)
-      )
+      return AnyShapeStyle(Color.clear)
     case .solid:
       return AnyShapeStyle(ColorResource.Neutral._500.color)
     }
@@ -84,32 +79,63 @@ struct TooltipView: View {
   }
   
   var body: some View {
-    VStack(spacing: 0) {
-      contentView
-      bottomArrowView
+    switch type {
+    case .rewardGradient:
+      ZStack(alignment: .bottom) {
+        ChromeMaterialBlurView(style: .systemUltraThinMaterial)
+          .mask(
+            TooltipShape(cornerRadius: 8, arrowWidth: 12, arrowHeight: 6)
+          )
+        textView
+          .padding(10)
+          .padding(.bottom, 6) // arrow 높이만큼 여백
+      }
+    default:
+      VStack(spacing: 0) {
+        contentView
+        bottomArrowView
+          .frame(width: 12, height: 6)
+      }
     }
   }
   
   private var contentView: some View {
     textView
       .padding(10)
-      .background(type.backgroundColor)
-      .clipShape(RoundedRectangle(cornerRadius: 8))
+      .background {
+        switch type {
+        case .rewardGradient:
+          ChromeMaterialBlurView(style: .systemUltraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+        default:
+          RoundedRectangle(cornerRadius: 8)
+            .fill(type.backgroundColor)
+        }
+      }
   }
   
   private var textView: some View {
     Text(message)
       .textStyle(type.typography)
       .foregroundStyle(type.foregroundColor)
+      .lineLimit(nil)
+      .fixedSize(horizontal: true, vertical: true)
       .if(expandWidth) { view in
         view.frame(maxWidth: .infinity)
       }
       .padding(.horizontal, 2)
+      .multilineTextAlignment(.center)
   }
   
+  @ViewBuilder
   private var bottomArrowView: some View {
-    BottomRoundedInvertedTriangle(cornerRadius: 1)
-      .fill(type.bottomArrowBackgroundColor)
-      .frame(width: 12, height: 6)
+    switch type {
+    case .rewardGradient:
+      ChromeMaterialBlurView(style: .systemUltraThinMaterial)
+        .mask(BottomRoundedInvertedTriangle(cornerRadius: 1))
+    default:
+      BottomRoundedInvertedTriangle(cornerRadius: 1)
+        .fill(type.bottomArrowBackgroundColor)
+    }
   }
 }

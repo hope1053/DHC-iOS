@@ -11,9 +11,17 @@ import ComposableArchitecture
 
 struct FortuneLoadingView: View {
   let store: StoreOf<FortuneLoadingReducer>
+  private let badgeText: String?
+  private let loadingMessage: String
   
-  init(store: StoreOf<FortuneLoadingReducer>) {
+  init(
+    store: StoreOf<FortuneLoadingReducer>,
+    badgeText: String? = nil,
+    loadingMessage: String = "오늘의 운세를 카드에 담고 있어요.."
+  ) {
     self.store = store
+    self.badgeText = badgeText
+    self.loadingMessage = loadingMessage
   }
   
   var body: some View {
@@ -21,12 +29,12 @@ struct FortuneLoadingView: View {
     .overlay(alignment: .top) {
       VStack(spacing: 8) {
         BadgeView(
-          text: store.todayDateString,
+          text: badgeText ?? store.todayDateString,
           textColor: ColorResource.Text.Body.primary.color,
           font: Typography.Body.body6
         )
         
-        Text("오늘의 운세를 카드에 담고 있어요..")
+        Text(loadingMessage)
           .foregroundStyle(ColorResource.Text.Body.primary.color)
           .textStyle(.h4)
       }
@@ -35,6 +43,7 @@ struct FortuneLoadingView: View {
     .onAppear {
       store.send(.onAppear)
     }
+    .navigationBarBackButtonHidden()
   }
   
   @ViewBuilder

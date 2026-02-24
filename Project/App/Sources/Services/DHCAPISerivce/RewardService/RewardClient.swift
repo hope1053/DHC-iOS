@@ -12,6 +12,8 @@ import ComposableArchitecture
 @DependencyClient
 struct RewardClient {
   var fetchRewardProcess: @Sendable () async throws -> RewardInfo
+  var createYearlyFortune: @Sendable () async throws -> Void
+  var fetchYearlyFortune: @Sendable () async throws -> YearlyFortune
 }
 
 extension RewardClient: DependencyKey {
@@ -23,6 +25,15 @@ extension RewardClient: DependencyKey {
         try await networkManager
           .request(RewardAPI.rewardProgress)
           .map(to: RewardProgressDTO.self)
+          .toDomain
+      },
+      createYearlyFortune: {
+        _ = try await networkManager.request(RewardAPI.createYearlyFortune)
+      },
+      fetchYearlyFortune: {
+        try await networkManager
+          .request(RewardAPI.yearlyFortune)
+          .map(to: YearlyFortuneDTO.self)
           .toDomain
       }
     )
@@ -38,4 +49,3 @@ extension DependencyValues {
     set { self[RewardClient.self] = newValue }
   }
 }
-

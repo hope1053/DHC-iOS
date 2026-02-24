@@ -27,10 +27,10 @@ struct MessageCardView: View {
         .foregroundStyle(ColorResource.Text.Body.primary.color)
         .padding(.bottom, 12)
     }
-    .frame(maxWidth: .infinity)
     .padding(.horizontal, 16)
     .padding(.bottom, 16)
     .padding(.top, 20)
+    .frame(maxWidth: .infinity, alignment: .leading)
     .background(ColorResource.Neutral._700.color)
     .clipShape(RoundedRectangle(cornerRadius: 12))
   }

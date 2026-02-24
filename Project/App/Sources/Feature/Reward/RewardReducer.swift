@@ -11,7 +11,7 @@ import ComposableArchitecture
 
 enum ReceivedRewardAction {
   case showToast(String)
-  case moveToDetailView(type: RewardItemType, isUsed: Bool)
+  case moveToDetailView(type: RewardItemType)
 }
 
 @Reducer
@@ -24,6 +24,7 @@ struct RewardReducer {
     var rewardInfo: RewardInfo?
     var toastType: ToastType = .textWithCheck("")
     var isToastPresented: Bool = false
+    var isInfoTooltipVisible: Bool = false
     
     var userProgressInfo: RewardInfo.UserProgressInfo? {
       rewardInfo?.userProgressInfo
@@ -45,6 +46,8 @@ struct RewardReducer {
     // Internal Action
     case fetchRewardProgress
     case fetchRewardProgressResponse(Result<RewardInfo, Error>)
+    case createYearlyFortune
+    case createYearlyFortuneResponse(Result<Void, Error>)
     case showToast(ToastType)
     
     // Route Action
@@ -55,6 +58,7 @@ struct RewardReducer {
   @Reducer
   enum Path {
     case yearlyFortune(YearlyFortuneReducer)
+    case fortuneLoading(FortuneLoadingReducer)
   }
   
   @Dependency(\.rewardClient) var rewardClient
@@ -86,19 +90,55 @@ struct RewardReducer {
         return .none
         
       case .onOpenRewardButtonTapped:
-        return .send(.moveToYearlyFortune(type: .detail))
+        guard case .openable? = state.rewardInfo?.rewardStatus else {
+          return .none
+        }
+        return .send(.createYearlyFortune)
+
+      case .createYearlyFortune:
+        state.path.append(.fortuneLoading(FortuneLoadingReducer.State()))
+        return .run { [rewardClient] send in
+          await send(
+            .createYearlyFortuneResponse(
+              Result {
+                try await rewardClient.createYearlyFortune()
+              }
+            )
+          )
+        }
+
+      case .createYearlyFortuneResponse(.success):
+        if let lastPath = state.path.last, case .fortuneLoading = lastPath {
+          state.path.removeLast()
+        }
+        return .merge(
+          .send(.fetchRewardProgress),
+          .send(.moveToYearlyFortune(type: .detail))
+        )
+
+      case .createYearlyFortuneResponse(.failure(let error)):
+        if let lastPath = state.path.last, case .fortuneLoading = lastPath {
+          state.path.removeLast()
+        }
+        state.toastType = .textWithCheck("리워드 생성에 실패했어요")
+        state.isToastPresented = true
+        print("Failed to create yearly fortune: \(error)")
+        return .none
         
       case .onWhatIsRewardButtonTapped:
         return .send(.moveToYearlyFortune(type: .sample))
         
       case .infoButtonTapped:
-        // TODO: 정보 버튼 액션 구현
+        state.isInfoTooltipVisible.toggle()
         return .none
         
       case .onRewardItemTapped(let action):
         switch action {
-        case .moveToDetailView(let type, let isUsed):
-          return .send(.moveToYearlyFortune(type: .detail))
+        case .moveToDetailView(let type):
+          switch type {
+          case .yearlyFortune:
+            return .send(.moveToYearlyFortune(type: .detail))
+          }
         case .showToast(let toastMessage):
           state.toastType = .imageAndText(ImageResource.Icon.gift.image, toastMessage)
           state.isToastPresented = true

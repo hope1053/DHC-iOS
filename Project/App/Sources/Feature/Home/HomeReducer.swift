@@ -324,7 +324,7 @@ struct HomeReducer {
         score: dailyFortune.score,
         summary: dailyFortune.title
       )
-      let cardInfo = FortuneDetail.FortuneCard(
+      let cardInfo = FortuneCard(
         backgroundImageURL: dailyFortune.cardImageURL,
         title: dailyFortune.cardTitle,
         fortune: dailyFortune.cardSubTitle

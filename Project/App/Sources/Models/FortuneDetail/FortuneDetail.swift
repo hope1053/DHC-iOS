@@ -19,18 +19,6 @@ struct FortuneDetail: Equatable {
     let score: Int
     let summary: String
   }
-  struct FortuneCard: Equatable {
-    let backgroundImageURL: URL?
-    let title: String
-    let fortune: String
-  }
-
-  struct Tip: Equatable, Hashable {
-    let imageURL: URL?
-    let title: String
-    let content: String
-    let contentColor: Color?
-  }
 }
 
 extension FortuneDetail {
@@ -44,8 +32,8 @@ extension FortuneDetail {
       ),
       cardInfo: .init(
         backgroundImageURL: .urlForResource(.fortuneCardFrontDefaultView),
-        title: "최고의 날",
-        fortune: "네잎클로버"
+        title: "조용한 날",
+        fortune: "조용한 호랑이"
       ),
       detailMessage: "오늘은 지갑을 더 단단히 쥐고 계셔야겠어요. 괜히 시선 가는 거 많고, 충동구매가 살짝 걱정되는 날이에요. 꼭 필요한 소비인지 한 번만 더 생각해보면, 내일의 나에게 분명 고마워할 거예요.\n\n행운의 색인 연두색이 들어간 소품을 곁에 두면 조금 더 차분한 하루가 될지도 몰라요.",
       tipInfos: [

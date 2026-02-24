@@ -50,8 +50,8 @@ struct FortunePickExampleView: View {
           backContent: {
             FortuneCardFrontView(
               backgroundImageURL: .urlForResource(.fortuneCardFrontDefaultView),
-              title: "최고의 날",
-              fortune: "네잎클로버"
+              title: "조용한 날",
+              fortune: "조용한 호랑이"
             )
           },
           flipCompletion: {
@@ -85,8 +85,8 @@ struct FortunePickExampleView: View {
         cardView: {
           FortuneCardFrontView(
             backgroundImageURL: .urlForResource(.fortuneCardFrontDefaultView),
-            title: "최고의 날",
-            fortune: "네잎클로버"
+            title: "조용한 날",
+            fortune: "조용한 호랑이"
           )
         }
       )

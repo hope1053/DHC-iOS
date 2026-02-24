@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct YearlyFortune: Equatable {
-  let title: String
+  let navigationTitle: String
   let scoreInfo: FortuneScore
   let cardInfo: FortuneCard
   let overallFortune: OverallFortune
@@ -16,40 +16,14 @@ struct YearlyFortune: Equatable {
   let elementBalance: ElementBalance
   let elementShift: ElementShift
   let tipInfos: [Tip]
-  
-  init(
-    title: String,
-    scoreInfo: FortuneScore,
-    cardInfo: FortuneCard,
-    overallFortune: OverallFortune,
-    categoryFortuneItems: [CategoryFortuneItem],
-    elementBalance: ElementBalance,
-    elementShift: ElementShift,
-    tipInfos: [Tip]
-  ) {
-    self.title = title
-    self.scoreInfo = scoreInfo
-    self.cardInfo = cardInfo
-    self.overallFortune = overallFortune
-    self.categoryFortuneItems = categoryFortuneItems
-    self.elementBalance = elementBalance
-    self.elementShift = elementShift
-    self.tipInfos = tipInfos
-  }
 }
 
 extension YearlyFortune {
   struct FortuneScore: Equatable {
-    var fortuneTitle: String
+    var badgeTitle: String
     let scoreString: String
     let score: Int
     let summary: String
-  }
-
-  struct FortuneCard: Equatable {
-    let backgroundImageURL: URL?
-    let title: String
-    let fortune: String
   }
   
   struct OverallFortune: Equatable {
@@ -92,6 +66,7 @@ extension YearlyFortune {
     struct ElementBalanceItem: Equatable, Identifiable {
       var id: String { element }
       let element: String
+      let elementStatus: String
       let percentage: Double
       let color: Color
       let imageURL: URL?
@@ -102,34 +77,26 @@ extension YearlyFortune {
     let title: String
     let description: String
   }
-  
-  struct Tip: Equatable, Identifiable {
-    var id: String { content }
-    let imageURL: URL?
-    let title: String
-    let content: String
-    let contentColor: Color?
-  }
 }
 
 extension YearlyFortune {
   static func sample(date: String) -> YearlyFortune {
     YearlyFortune(
-      title: "리워드는 뭔가요?",
+      navigationTitle: "리워드는 뭔가요?",
       scoreInfo: .init(
-        fortuneTitle: date,
+        badgeTitle: "\(date)년 운세 총평",
         scoreString: "79점 (예시데이터)",
-        score: 79,
+        score: 70, // 색상 고정을 위해 예시 데이터에서만 점수 다르게 설정,
         summary: "올 한해는 전반적으로 마음이 들뜨는 날이에요,\n한템포 쉬어가요."
       ),
       cardInfo: .init(
         backgroundImageURL: URL.urlForResource(.fortuneCardFrontDefaultView),
-        title: "최고의 날",
-        fortune: "네잎클로버"
+        title: "조용한 날",
+        fortune: "조용한 호랑이"
       ),
       overallFortune: .init(
-        title: "전반적인 운세 타이틀",
-        fortune: "오늘은 지갑을 더 단단히 쥐고 계셔야겠어요. 괜히 시선 가는 거 많고, 충동구매가 살짝 걱정되는 날이에요. 꼭 필요한 소비인지 한 번만 더 생각해보면, 내일의 나에게 분명 고마워할 거예요. 행운의 색인 연두색이 들어간 소품을 곁에 두면 조금 더 차분한 하루가 될지도 몰라요."
+        title: "운세",
+        fortune: "이번 달은 마음이 한층 단단해지는 시기예요. 불필요한 걱정에 에너지를 쓰기보단, 지금 눈앞의 상황에 집중하면 일이 자연스럽게 풀려갑니다. 충동적인 선택이 아니라 조금 더 생각하고 결정하는 것만으로도 내일의 나에게 분명 고마운 한 달이 될 거예요."
       ),
       categoryFortuneItems: [
         CategoryFortuneItem(
@@ -156,31 +123,36 @@ extension YearlyFortune {
         ),
         balanceItem: [
           .init(
-            element: "적정",
+            element: "tree",
+            elementStatus: "적정",
             percentage: 0.2,
             color: ColorResource.Green._100.color,
             imageURL: URL.urlForResource(.tree)
           ),
           .init(
-            element: "과다",
+            element: "fire",
+            elementStatus: "과다",
             percentage: 0.4,
             color: ColorResource.Red._100.color,
             imageURL: URL.urlForResource(.fire)
           ),
           .init(
-            element: "적정",
+            element: "soil",
+            elementStatus: "적정",
             percentage: 0.3,
             color: ColorResource.Green._100.color,
             imageURL: URL.urlForResource(.soil)
           ),
           .init(
-            element: "적정",
+            element: "gold",
+            elementStatus: "적정",
             percentage: 0.2,
             color: ColorResource.Green._100.color,
             imageURL: URL.urlForResource(.gold)
           ),
           .init(
-            element: "부족",
+            element: "water",
+            elementStatus: "부족",
             percentage: 0.1,
             color: ColorResource.Violet._500.color,
             imageURL: URL.urlForResource(.water)
@@ -188,7 +160,7 @@ extension YearlyFortune {
         ]
       ),
       elementShift: .init(
-        title: "올해의 기운 변화 타이틀",
+        title: "기운 변화",
         description: """
         화의 기운은
         ‘결단력・집중・주체성’을 밝히는 에너지예요.

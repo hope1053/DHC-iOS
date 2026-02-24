@@ -20,9 +20,17 @@ struct RewardProgressDTO: Decodable {
 
 extension RewardProgressDTO {
   var toDomain: RewardInfo {
-    .init(
+    let rewardStatus: RewardStatus = rewardList.first.map { firstItem in
+      guard firstItem.isUnlocked else {
+        return .notOpened
+      }
+      return firstItem.isUsed ? .opened : .openable
+    } ?? .notOpened
+    
+    return .init(
       userProgressInfo: userProgressInfo.toDomain,
-      totalLevel: 8, // TODO: 현재는 클라에서 총 레벨 관리하는걸로 유지, 추후 서버에서 총 레벨 내려줘야하는 경우 수정 필요
+      totalLevel: 8, // TODO: 현재는 클라에서 총 레벨 관리하는걸로 유지, 추후 서버에서 총 레벨 내려줘야하는 경우 수정 필요,
+      rewardStatus: rewardStatus,
       receivedRewards: rewardList.map { $0.toDomain }
     )
   }
@@ -34,7 +42,7 @@ struct UserProgressInfoDTO: Decodable {
     let rewardLevel: RewardLevelDTO
     let totalPoint: Int
     let currentLevelPoint: Int
-    let nextLevelRequiredPoint: Int
+    let nextLevelRequiredPoint: Int?
 
     enum CodingKeys: String, CodingKey {
         case rewardImageURL = "rewardImageUrl"
@@ -45,13 +53,13 @@ struct UserProgressInfoDTO: Decodable {
 extension UserProgressInfoDTO {
   var toDomain: RewardInfo.UserProgressInfo {
     .init(
-      currentPoints: currentLevelPoint,
+      currentPoints: totalPoint,
       currentLevel: .init(
         level: rewardLevel.level,
         name: rewardLevel.name,
         imageURL: URL(string: rewardImageURL)
       ),
-      pointsToNextLevel: nextLevelRequiredPoint
+      pointsToNextLevel: nextLevelRequiredPoint ?? 0
     )
   }
 }
@@ -79,9 +87,8 @@ extension RewardItemDTO {
       id: id,
       title: title,
       type: type,
-      iconURL: isUnlocked ? URL.urlForResource(.lock) : URL(string: iconURL),
-      message: message,
-      isUsed: isUsed
+      iconURL: isUnlocked && isUsed ? URL(string: iconURL) : URL.urlForResource(.lock),
+      message: message
     )
   }
 }

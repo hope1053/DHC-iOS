@@ -45,6 +45,7 @@ struct RewardView: View {
                   currentPoints: userInfo.currentPoints,
                   pointsToNextLevel: userInfo.pointsToNextLevel,
                   currentLevel: userInfo.currentLevel,
+                  rewardStatus: rewardInfo.rewardStatus,
                   totalSteps: rewardInfo.totalLevel,
                   onOpenRewardButtonTapped: {
                     store.send(.onOpenRewardButtonTapped)
@@ -85,6 +86,12 @@ struct RewardView: View {
       switch store.case {
       case .yearlyFortune(let store):
         YearlyFortuneView(store: store)
+      case .fortuneLoading(let store):
+        FortuneLoadingView(
+          store: store,
+          badgeText: "프리미엄 운세",
+          loadingMessage: "전반적인 운세를 카드에 담고 있어요.."
+        )
       }
     }
   }
@@ -104,13 +111,31 @@ struct RewardView: View {
       }
       
       Button {
-        store.send(.infoButtonTapped)
+        withAnimation(.easeInOut(duration: 0.2)) {
+          _ = store.send(.infoButtonTapped)
+        }
       } label: {
         Image(.Icon.info)
           .resizable()
           .renderingMode(.template)
           .frame(width: 20, height: 20)
           .foregroundStyle(ColorResource.Neutral._400.color)
+      }
+    }
+    .frame(maxWidth: .infinity)
+    .overlay(alignment: .top) {
+      if store.isInfoTooltipVisible {
+        TooltipView(
+          type: .rewardGradient,
+          message: """
+          경험치를 모아 복주머니 레벨을 올리면
+          1년 운세를 볼 수 있어요
+          """,
+          expandWidth: true
+        )
+        .padding(.horizontal, 12)
+        .transition(.opacity)
+        .offset(y: -74)
       }
     }
     .padding(.bottom, 20)
