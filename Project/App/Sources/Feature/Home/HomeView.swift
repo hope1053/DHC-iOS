@@ -70,12 +70,6 @@ struct HomeView: View {
           missionResult: store.popupType,
           didTapRewardButton: {
             store.send(.rewardButtonTapped)
-          },
-          showCollectedRewardButtonTapped: {
-            
-          },
-          getRewardButtonTapped: {
-            
           }
         )
         .equatable()

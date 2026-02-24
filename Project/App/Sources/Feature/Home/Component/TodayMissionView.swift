@@ -12,23 +12,17 @@ struct TodayMissionView: View, Equatable {
   private let completedMissionCount: Int
   private let missionResult: MissionResult?
   private let didTapRewardButton: () -> Void
-  private let showCollectedRewardButtonTapped: () -> Void
-  private let getRewardButtonTapped: () -> Void
   
   init(
     remainingSeconds: Int,
     completedMissionCount: Int,
     missionResult: MissionResult? = nil,
-    didTapRewardButton: @escaping () -> Void,
-    showCollectedRewardButtonTapped: @escaping () -> Void,
-    getRewardButtonTapped: @escaping () -> Void
+    didTapRewardButton: @escaping () -> Void
   ) {
     self.remainingSeconds = remainingSeconds
     self.completedMissionCount = completedMissionCount
     self.missionResult = missionResult
     self.didTapRewardButton = didTapRewardButton
-    self.showCollectedRewardButtonTapped = showCollectedRewardButtonTapped
-    self.getRewardButtonTapped = getRewardButtonTapped
   }
   
   static func == (lhs: TodayMissionView, rhs: TodayMissionView) -> Bool {
@@ -46,9 +40,7 @@ struct TodayMissionView: View, Equatable {
         completedMissionCount: completedMissionCount,
         totalMissionCount: 3,
         missionResult: missionResult,
-        onRewardTapped: didTapRewardButton,
-        showCollectedRewardButtonTapped: showCollectedRewardButtonTapped,
-        getRewardButtonTapped: getRewardButtonTapped
+        onRewardTapped: didTapRewardButton
       )
       .equatable()
     }
@@ -64,23 +56,17 @@ struct MissionProgressView: View, Equatable {
   private let totalMissionCount: Int
   private let missionResult: MissionResult?
   private let onRewardTapped: () -> Void
-  private let showCollectedRewardButtonTapped: () -> Void
-  private let getRewardButtonTapped: () -> Void
   
   init(
     completedMissionCount: Int,
     totalMissionCount: Int,
     missionResult: MissionResult? = nil,
-    onRewardTapped: @escaping () -> Void,
-    showCollectedRewardButtonTapped: @escaping () -> Void,
-    getRewardButtonTapped: @escaping () -> Void
+    onRewardTapped: @escaping () -> Void
   ) {
     self.completedMissionCount = completedMissionCount
     self.totalMissionCount = totalMissionCount
     self.missionResult = missionResult
     self.onRewardTapped = onRewardTapped
-    self.showCollectedRewardButtonTapped = showCollectedRewardButtonTapped
-    self.getRewardButtonTapped = getRewardButtonTapped
   }
   
   static func == (lhs: MissionProgressView, rhs: MissionProgressView) -> Bool {
