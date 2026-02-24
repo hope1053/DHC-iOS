@@ -142,7 +142,12 @@ struct MilestoneProgressView: View {
   
   // 라벨 색상 결정
   private func labelColor(for milestone: Milestone, index: Int) -> Color {
-    return currentLevel == milestone.level
+    let isGoalMilestone = index == milestones.count - 1
+    let isHighlighted = isGoalMilestone
+      ? currentLevel >= milestone.level
+      : currentLevel == milestone.level
+    
+    return isHighlighted
       ? ColorResource.Text.Highlights.primary.color
       : ColorResource.Neutral._500.color
   }

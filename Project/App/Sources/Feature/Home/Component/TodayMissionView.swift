@@ -133,7 +133,7 @@ struct MissionProgressView: View, Equatable {
       case 3:
         return "리워드를 받아보세요!"
       default:
-        return "단 \(totalMissionCount)개만 도전해 보세요"
+        return "리워드를 받아보세요!"
       }
     }() 
     
