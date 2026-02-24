@@ -86,7 +86,7 @@ struct StepProgressView: View {
   }
   
   private func labelColor(for milestone: Milestone) -> Color {
-    return currentLevel >= milestone.level
+    return currentLevel == milestone.level
       ? ColorResource.Text.Highlights.primary.color
       : ColorResource.Neutral._500.color
   }
