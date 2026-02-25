@@ -16,12 +16,18 @@ struct HomeInfo: Equatable {
   let pastMissionStatus: PastMissionStatus?
 }
 
+enum MissionType: String, Decodable {
+  case longTerm = "LONG_TERM"
+  case daily = "DAILY"
+  case love = "LOVE"
+}
+
 extension HomeInfo {
   struct Mission: Equatable {
     let id: String
     let category: String
     let difficulty: Int
-    let type: String
+    let type: MissionType
     var isFinished: Bool
     let cost: String
     let endDate: String
@@ -76,7 +82,7 @@ extension HomeInfo {
       id: "long-term-001",
       category: "생활",
       difficulty: 3,
-      type: "LONG_TERM",
+      type: .longTerm,
       isFinished: false,
       cost: "25000",
       endDate: "2025-07-18",
@@ -88,7 +94,7 @@ extension HomeInfo {
         id: "daily-001",
         category: "이동·교통",
         difficulty: 3,
-        type: "DAILY",
+        type: .daily,
         isFinished: false,
         cost: "24000",
         endDate: "2025-07-05",
@@ -99,7 +105,7 @@ extension HomeInfo {
         id: "daily-002",
         category: "이동·교통",
         difficulty: 2,
-        type: "DAILY",
+        type: .daily,
         isFinished: false,
         cost: "12000",
         endDate: "2025-07-05",
@@ -110,7 +116,7 @@ extension HomeInfo {
         id: "daily-003",
         category: "이동·교통",
         difficulty: 1,
-        type: "DAILY",
+        type: .daily,
         isFinished: false,
         cost: "4000",
         endDate: "2025-07-05",
@@ -144,7 +150,7 @@ extension HomeInfo.Mission {
       id: "-1",
       category: "식음료",
       difficulty: 5,
-      type: "LONG_TERM",
+      type: .longTerm,
       isFinished: false,
       cost: "100.00",
       endDate: endDate,
@@ -158,7 +164,7 @@ extension HomeInfo.Mission {
       id: "0",
       category: "취미·문화",
       difficulty: 1,
-      type: "DAILY",
+      type: .daily,
       isFinished: false,
       cost: "100.00",
       endDate: "2024-12-31",
@@ -169,7 +175,7 @@ extension HomeInfo.Mission {
       id: "1",
       category: "취미·문화",
       difficulty: 1,
-      type: "DAILY",
+      type: .daily,
       isFinished: false,
       cost: "100.00",
       endDate: "2024-12-31",
@@ -180,7 +186,7 @@ extension HomeInfo.Mission {
       id: "2",
       category: "취미·문화",
       difficulty: 1,
-      type: "DAILY",
+      type: .daily,
       isFinished: false,
       cost: "100.00",
       endDate: "2024-12-31",
@@ -191,7 +197,7 @@ extension HomeInfo.Mission {
       id: "3",
       category: "취미·문화",
       difficulty: 1,
-      type: "DAILY",
+      type: .daily,
       isFinished: false,
       cost: "100.00",
       endDate: "2024-12-31",
@@ -202,7 +208,7 @@ extension HomeInfo.Mission {
       id: "4",
       category: "취미·문화",
       difficulty: 1,
-      type: "DAILY",
+      type: .daily,
       isFinished: false,
       cost: "100.00",
       endDate: "2024-12-31",

@@ -64,7 +64,7 @@ extension HomeDTO {
     let missionID: String
     let category: String
     let difficulty: Int
-    let type: String
+    let type: MissionType
     let isFinished: Bool
     let cost: String
     let endDate: String
