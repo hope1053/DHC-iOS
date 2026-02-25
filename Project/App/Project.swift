@@ -38,6 +38,7 @@ let project = Project(
         .external(externalDependency: .alamofire),
         .external(externalDependency: .composableArchitecture),
         .external(externalDependency: .sdWebImageSwiftUI),
+        .external(externalDependency: .sdWebImageSVGCoder),
         .external(externalDependency: .lottie)
       ],
       settings: .settings(

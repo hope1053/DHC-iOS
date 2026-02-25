@@ -37,6 +37,7 @@ struct TipCardView: View {
       HStack(spacing: 4) {
         WebImage(
           url: imageURL,
+          context: RemoteImageContext.context(for: imageURL),
           content: { image in
             image.resizable()
           },

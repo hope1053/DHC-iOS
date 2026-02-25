@@ -12,6 +12,7 @@ let packageSettings = PackageSettings(
     "Alamofire": .framework,
     "ComposableArchitecture": .framework,
     "SDWebImageSwiftUI": .framework,
+    "SDWebImageSVGCoder": .framework,
   ]
 )
 #endif
@@ -26,6 +27,10 @@ let package = Package(
     .package(
         url: "https://github.com/SDWebImage/SDWebImageSwiftUI.git",
         .upToNextMajor(from: "3.1.0")
+    ),
+    .package(
+        url: "https://github.com/SDWebImage/SDWebImageSVGCoder.git",
+        .upToNextMajor(from: "1.7.0")
     ),
     .package(
         url: "https://github.com/airbnb/lottie-spm.git",

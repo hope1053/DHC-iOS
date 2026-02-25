@@ -8,9 +8,15 @@
 import SwiftUI
 
 import ComposableArchitecture
+import SDWebImage
+import SDWebImageSVGCoder
 
 @main
 struct FlifinApp: App {
+  init() {
+    SDImageCodersManager.shared.addCoder(SDImageSVGCoder.shared)
+  }
+
 	var body: some Scene {
 		WindowGroup {
       RootView(

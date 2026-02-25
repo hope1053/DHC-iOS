@@ -25,7 +25,10 @@ struct RewardView: View {
         
         ScrollView {
           VStack(spacing: 0) {
-            WebImage(url: store.userProgressInfo?.currentLevel.imageURL) { image in
+            WebImage(
+              url: store.userProgressInfo?.currentLevel.imageURL,
+              context: RemoteImageContext.context(for: store.userProgressInfo?.currentLevel.imageURL)
+            ) { image in
               image.resizable()
             } placeholder: {
               EmptyView()
