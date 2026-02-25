@@ -14,7 +14,7 @@ struct HomeDTO: Decodable {
   let isTodayMissionDone: Bool
   let didYesterDayMissionSuccess: Bool
   let isLongAbsence: Bool
-  let isFirstAccessForAllTime: Bool // 해당 계정 생성 후 첫 접속
+  let isRegisterFirstDay: Bool // 가입 첫날
   let pastEarnedPoint: Int
   let testInfo: TestInfoDTO?
 
@@ -25,7 +25,7 @@ struct HomeDTO: Decodable {
     case isTodayMissionDone = "todayDone"
     case didYesterDayMissionSuccess = "yesterdayMissionSuccess"
     case isLongAbsence = "longAbsence"
-    case isFirstAccessForAllTime = "isFirstAccess"
+    case isRegisterFirstDay = "isFirstAccess"
     case pastEarnedPoint = "point"
     case testInfo = "testBanner"
   }
@@ -64,7 +64,7 @@ extension HomeDTO {
     let missionID: String
     let category: String
     let difficulty: Int
-    let type: String
+    let type: MissionType
     let isFinished: Bool
     let cost: String
     let endDate: String
@@ -125,7 +125,7 @@ extension HomeDTO {
       pastMissionStatus: HomeInfo.PastMissionStatus(
         didYesterDayMissionSuccess: didYesterDayMissionSuccess,
         isLongAbsence: isLongAbsence,
-        isFirstAccessForAllTime: isFirstAccessForAllTime,
+        isRegisterFirstDay: isRegisterFirstDay,
         earnedPoint: pastEarnedPoint
       )
     )

@@ -44,7 +44,7 @@ struct StepProgressView: View {
     GeometryReader { geometry in
       let totalWidth = geometry.size.width
       let progress = calculateProgress()
-      let filledWidth = totalWidth * CGFloat(progress)
+      let filledWidth = totalWidth * CGFloat(progress) + 14
       
       ZStack(alignment: .leading) {
         Capsule()
@@ -53,12 +53,18 @@ struct StepProgressView: View {
         
         Capsule()
           .fill(ColorResource.Text.Highlights.primary.color)
-          .frame(width: max(28, filledWidth), height: 12)
+          .frame(width: min(totalWidth, max(28, filledWidth)), height: 12)
         
         HStack(spacing: 0) {
           ForEach(Array(milestones.enumerated()), id: \.offset) { index, milestone in
-            milestoneMarker(for: milestone.type)
-              .frame(maxWidth: .infinity, alignment: .center)
+            if milestone.level == currentLevel, currentLevel != milestones.count{
+              Color.clear
+                .frame(width: 24, height: 24)
+                .frame(maxWidth: .infinity, alignment: .center)
+            } else {
+              milestoneMarker(for: milestone.type)
+                .frame(maxWidth: .infinity, alignment: .center)
+            }
             
             if index < milestones.count - 1 {
               Spacer(minLength: 0)
@@ -86,7 +92,7 @@ struct StepProgressView: View {
   }
   
   private func labelColor(for milestone: Milestone) -> Color {
-    return currentLevel >= milestone.level
+    return currentLevel == milestone.level
       ? ColorResource.Text.Highlights.primary.color
       : ColorResource.Neutral._500.color
   }
@@ -107,4 +113,3 @@ struct StepProgressView: View {
     }
   }
 }
-

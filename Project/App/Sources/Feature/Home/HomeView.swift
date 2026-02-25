@@ -67,15 +67,10 @@ struct HomeView: View {
         TodayMissionView(
           remainingSeconds: store.remainingSeconds,
           completedMissionCount: store.completedMissionCount,
-          missionResult: store.popupType,
+          missionResult: store.todayMissionResult,
+          state: store.homeInfo.isTodayMissionDone ? .disable : .able, // TODO: state 판단 기준 추후 API 추가되면 수정 필요
           didTapRewardButton: {
             store.send(.rewardButtonTapped)
-          },
-          showCollectedRewardButtonTapped: {
-            
-          },
-          getRewardButtonTapped: {
-            
           }
         )
         .equatable()
@@ -120,9 +115,6 @@ struct HomeView: View {
       scaleEffectX: 1.8
     )
     .background(ColorResource.Background.main.color)
-    .onAppear {
-      store.send(.onAppear)
-    }
     .adaptiveBottomSheet(
       isPresented: $store.presentBottomSheet.sending(\.presentBottomSheet)
     ) {
@@ -151,7 +143,7 @@ struct HomeView: View {
       )
     }
     .popup(isPresented: $store.presentMissionDonePopup) {
-      if let popupType = store.popupType {
+      if let popupType = store.todayMissionResult {
         MissionResultView(
           type: popupType,
           onFirstButtonTapped: {

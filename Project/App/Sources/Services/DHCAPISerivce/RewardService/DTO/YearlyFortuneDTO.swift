@@ -31,6 +31,7 @@ extension YearlyFortuneDTO {
     
     struct FortuneOverviewItemDTO: Decodable {
       let title, description: String
+      let image: String
     }
   }
 
@@ -89,17 +90,17 @@ extension YearlyFortuneDTO {
       ),
       categoryFortuneItems: [
         .init(
-          imageURL: .urlForResource(.money),
+          imageURL: URL(string: fortuneOverview.money.image),
           title: fortuneOverview.money.title,
           description: fortuneOverview.money.description
         ),
         .init(
-          imageURL: .urlForResource(.love),
+          imageURL: URL(string: fortuneOverview.love.image),
           title: fortuneOverview.love.title,
           description: fortuneOverview.love.description
         ),
         .init(
-          imageURL: .urlForResource(.study),
+          imageURL: URL(string: fortuneOverview.study.image),
           title: fortuneOverview.study.title,
           description: fortuneOverview.study.description
         )

@@ -59,6 +59,7 @@ struct TestParticipationView: View {
       // TODO: image size 추후 수정 필요
       WebImage(
         url: store.test.imageURL,
+        context: RemoteImageContext.context(for: store.test.imageURL),
         content: { image in
           image.image?.resizable()
         }

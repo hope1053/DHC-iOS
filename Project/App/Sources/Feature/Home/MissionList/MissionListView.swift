@@ -89,8 +89,8 @@ struct MissionListView: View {
             isPinned: false,
             isActive: !store.isTodayMissionDone,
             isSwipeEnabled: !store.isTodayMissionDone && store.isSwipeEnabled,
-            badgeTitle: missionLevel(for: mission.difficulty).displayName,
-            badgeStyle: .missionLevel(missionLevel(for: mission.difficulty)),
+            badgeTitle: missionLevel(for: mission.difficulty, isLoveMission: mission.type == .love).displayName,
+            badgeStyle: .missionLevel(missionLevel(for: mission.difficulty, isLoveMission: mission.type == .love)),
             onSwitchMission: {
               store.send(.switchMissionButtonTapped(missionID: mission.id))
             },
@@ -124,7 +124,11 @@ struct MissionListView: View {
     day == 0 ? "D-day" : "D-\(day)"
   }
 
-  private func missionLevel(for difficulty: Int) -> DHCBadge.MissionLevel {
+  private func missionLevel(for difficulty: Int, isLoveMission: Bool) -> DHCBadge.MissionLevel {
+    if isLoveMission {
+      return .love
+    }
+    
     switch difficulty {
     case 1: return .easy
     case 2: return .medium

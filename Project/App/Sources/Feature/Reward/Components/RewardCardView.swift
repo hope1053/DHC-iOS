@@ -29,7 +29,10 @@ struct RewardCardView: View {
   }
   
   private var iconView: some View {
-    WebImage(url: reward.iconURL) { image in
+    WebImage(
+      url: reward.iconURL,
+      context: RemoteImageContext.context(for: reward.iconURL)
+    ) { image in
       image
     }
     placeholder: {
@@ -43,4 +46,3 @@ struct RewardCardView: View {
     .clipShape(RoundedRectangle(cornerRadius: 8))
   }
 }
-

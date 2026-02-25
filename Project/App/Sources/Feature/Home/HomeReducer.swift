@@ -38,7 +38,7 @@ struct HomeReducer {
     var homeInfo: HomeInfo
     var presentBottomSheet = false
     var presentMissionDonePopup = false
-    var popupType: MissionResult?
+    var todayMissionResult: MissionResult?
     var presentToast = false
     var testParticipation: TestParticipationReducer.State? = nil
 
@@ -48,7 +48,13 @@ struct HomeReducer {
     var shareTokenCookie = ShareTokenCookieReducer.State()
     var remainingSeconds: Int = 0
     var completedMissionCount: Int {
-      missionList.todayDailyMissionList.filter { $0.isFinished }.count + (missionList.longTermMission.isFinished ? 1 : 0)
+      let completedDailyMissionCount = missionList.todayDailyMissionList
+        .filter { $0.isFinished && $0.type != .love }
+        .count
+      let completedLongTermMissionCount =
+        missionList.longTermMission.isFinished && missionList.longTermMission.type != .love ? 1 : 0
+
+      return completedDailyMissionCount + completedLongTermMissionCount
     }
 
     var bottomContentMargin: CGFloat {
@@ -173,7 +179,7 @@ struct HomeReducer {
 
       // MARK: - 팝업
     case .popupFirstButtonTapped:
-      guard let popupType = state.popupType else {
+      guard let popupType = state.todayMissionResult else {
         return .none
       }
       
@@ -189,7 +195,7 @@ struct HomeReducer {
       }
       
     case .popupSecondButtonTapped:
-      guard let popupType = state.popupType else {
+      guard let popupType = state.todayMissionResult else {
         return .none
       }
       
@@ -232,9 +238,9 @@ struct HomeReducer {
 
     case .todayMissionDoneResponse(let todayMissionStatus):
       if todayMissionStatus.isMissionSuccess {
-        state.popupType = .todaySuccess(earnedPoint: todayMissionStatus.earnedPoint)
+        state.todayMissionResult = .todaySuccess(earnedPoint: todayMissionStatus.earnedPoint)
       } else {
-        state.popupType = .todayFail
+        state.todayMissionResult = .todayFail
       }
       
       state.presentMissionDonePopup = true
@@ -316,6 +322,46 @@ struct HomeReducer {
   }
   
   private func handleHomeDataResponse(state: inout State, homeInfo: HomeInfo) -> Effect<Action> {
+    state.homeInfo = homeInfo
+    
+    // pastMissionStatus를 MissionResult로 변환
+    // 단, 이미 today 관련 popupType이 설정되어 있으면 덮어쓰지 않음
+    if case .todaySuccess = state.todayMissionResult {
+      // todayMissionDone 직후 fetchHomeData가 호출된 경우, today 상태 유지
+    } else if case .todayFail = state.todayMissionResult {
+      // todayMissionDone 직후 fetchHomeData가 호출된 경우, today 상태 유지
+    } else {
+      if homeInfo.isTodayMissionDone {
+        let hasFinishedMission =
+          homeInfo.longTermMission.isFinished ||
+          homeInfo.dailyMissionList.contains(where: { $0.isFinished })
+
+        if hasFinishedMission {
+          state.todayMissionResult = .todaySuccess(earnedPoint: 0)
+        } else {
+          state.todayMissionResult = .todayFail
+        }
+      } else {
+        // 일반적인 경우, 서버의 pastMissionStatus로 업데이트
+        state.todayMissionResult = MissionResult(from: homeInfo.pastMissionStatus)
+      }
+    }
+    
+    // 닫힌 버전 필터링: availableTest가 있고 해당 버전이 닫힌 버전에 없는 경우에만 표시
+    let dismissedVersions = testBannerStorage.getDismissedVersions()
+    if let test = homeInfo.availableTest,
+       !dismissedVersions.contains(test.version) {
+      state.testParticipation = TestParticipationReducer.State(test: test)
+    } else {
+      state.testParticipation = nil
+    }
+    
+    let missionListUpdateEffect: Effect<Action> = .merge(
+      .send(.missionList(.updateLongTermMission(homeInfo.longTermMission))),
+      .send(.missionList(.updateDailyMissions(homeInfo.dailyMissionList))),
+      .send(.missionList(.updateTodayMissionDone(homeInfo.isTodayMissionDone)))
+    )
+    
     if state.isFirstLaunchOfToday {
       let dailyFortune = homeInfo.dailyFortune
       let scoreInfo = FortuneDetail.FortuneScore(
@@ -340,35 +386,9 @@ struct HomeReducer {
       withAnimation(.easeInOut(duration: 0.5)) {
         state.viewState = .firstLaunch
       }
-      return .none
+      return missionListUpdateEffect
     } else {
-      state.homeInfo = homeInfo
-      
-      // pastMissionStatus를 MissionResult로 변환
-      // 단, 이미 today 관련 popupType이 설정되어 있으면 덮어쓰지 않음
-      if case .todaySuccess = state.popupType {
-        // todayMissionDone 직후 fetchHomeData가 호출된 경우, today 상태 유지
-      } else if case .todayFail = state.popupType {
-        // todayMissionDone 직후 fetchHomeData가 호출된 경우, today 상태 유지
-      } else {
-        // 일반적인 경우, 서버의 pastMissionStatus로 업데이트
-        state.popupType = MissionResult(from: homeInfo.pastMissionStatus)
-      }
-      
-      // 닫힌 버전 필터링: availableTest가 있고 해당 버전이 닫힌 버전에 없는 경우에만 표시
-      let dismissedVersions = testBannerStorage.getDismissedVersions()
-      if let test = homeInfo.availableTest,
-         !dismissedVersions.contains(test.version) {
-        state.testParticipation = TestParticipationReducer.State(test: test)
-      } else {
-        state.testParticipation = nil
-      }
-      
-      return .merge(
-        .send(.missionList(.updateLongTermMission(homeInfo.longTermMission))),
-        .send(.missionList(.updateDailyMissions(homeInfo.dailyMissionList))),
-        .send(.missionList(.updateTodayMissionDone(homeInfo.isTodayMissionDone)))
-      )
+      return missionListUpdateEffect
     }
   }
   

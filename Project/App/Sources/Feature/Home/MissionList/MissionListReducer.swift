@@ -28,7 +28,7 @@ struct MissionListReducer {
       isSwipeEnabled: Bool = true
     ) {
       self.longTermMission = longTermMission
-      self.todayDailyMissionList = todayDailyMissionList
+      self.todayDailyMissionList = MissionListReducer.sortedDailyMissions(todayDailyMissionList)
       self.isTodayMissionDone = isTodayMissionDone
       self.isSwipeEnabled = isSwipeEnabled
     }
@@ -72,7 +72,7 @@ struct MissionListReducer {
         return .none
 
       case .updateDailyMissions(let missions):
-        state.todayDailyMissionList = missions
+        state.todayDailyMissionList = Self.sortedDailyMissions(missions)
         return .none
 
       case .updateTodayMissionDone(let isDone):
@@ -161,7 +161,7 @@ struct MissionListReducer {
         switch result {
         case .success(let switchMissionInfo):
           state.longTermMission = switchMissionInfo.longTermMission
-          state.todayDailyMissionList = switchMissionInfo.dailyMissionList
+          state.todayDailyMissionList = Self.sortedDailyMissions(switchMissionInfo.dailyMissionList)
           return .none
         case .failure(let error):
           print(error)
@@ -175,5 +175,11 @@ struct MissionListReducer {
         return .none
       }
     }
+  }
+
+  private static func sortedDailyMissions(_ missions: [HomeInfo.Mission]) -> [HomeInfo.Mission] {
+    let loveMissions = missions.filter { $0.type == .love }
+    let nonLoveMissions = missions.filter { $0.type != .love }
+    return loveMissions + nonLoveMissions
   }
 }
