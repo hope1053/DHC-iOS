@@ -331,8 +331,20 @@ struct HomeReducer {
     } else if case .todayFail = state.todayMissionResult {
       // todayMissionDone 직후 fetchHomeData가 호출된 경우, today 상태 유지
     } else {
-      // 일반적인 경우, 서버의 pastMissionStatus로 업데이트
-      state.todayMissionResult = MissionResult(from: homeInfo.pastMissionStatus)
+      if homeInfo.isTodayMissionDone {
+        let hasFinishedMission =
+          homeInfo.longTermMission.isFinished ||
+          homeInfo.dailyMissionList.contains(where: { $0.isFinished })
+
+        if hasFinishedMission {
+          state.todayMissionResult = .todaySuccess(earnedPoint: 0)
+        } else {
+          state.todayMissionResult = .todayFail
+        }
+      } else {
+        // 일반적인 경우, 서버의 pastMissionStatus로 업데이트
+        state.todayMissionResult = MissionResult(from: homeInfo.pastMissionStatus)
+      }
     }
     
     // 닫힌 버전 필터링: availableTest가 있고 해당 버전이 닫힌 버전에 없는 경우에만 표시
