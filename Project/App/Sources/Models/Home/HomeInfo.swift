@@ -54,10 +54,10 @@ extension HomeInfo {
     init?(
       didYesterDayMissionSuccess: Bool,
       isLongAbsence: Bool,
-      isFirstAccessForAllTime: Bool,
+      isRegisterFirstDay: Bool,
       earnedPoint: Int?
     ) {
-      if isFirstAccessForAllTime {
+      if isRegisterFirstDay {
         return nil
       } else if isLongAbsence {
         self = .longAbsence
