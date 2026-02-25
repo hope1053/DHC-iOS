@@ -20,6 +20,19 @@ enum MissionType: String, Decodable {
   case longTerm = "LONG_TERM"
   case daily = "DAILY"
   case love = "LOVE"
+
+  init(from decoder: Decoder) throws {
+    let container = try decoder.singleValueContainer()
+    let value = try container.decode(String.self).uppercased()
+
+    guard let type = Self(rawValue: value) else {
+      throw DecodingError.dataCorruptedError(
+        in: container,
+        debugDescription: "Invalid mission type: \(value)"
+      )
+    }
+    self = type
+  }
 }
 
 extension HomeInfo {

@@ -48,7 +48,13 @@ struct HomeReducer {
     var shareTokenCookie = ShareTokenCookieReducer.State()
     var remainingSeconds: Int = 0
     var completedMissionCount: Int {
-      missionList.todayDailyMissionList.filter { $0.isFinished }.count + (missionList.longTermMission.isFinished ? 1 : 0)
+      let completedDailyMissionCount = missionList.todayDailyMissionList
+        .filter { $0.isFinished && $0.type != .love }
+        .count
+      let completedLongTermMissionCount =
+        missionList.longTermMission.isFinished && missionList.longTermMission.type != .love ? 1 : 0
+
+      return completedDailyMissionCount + completedLongTermMissionCount
     }
 
     var bottomContentMargin: CGFloat {

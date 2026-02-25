@@ -65,6 +65,7 @@ extension DHCBadge {
     case easy
     case medium
     case hard
+    case love
 
     var displayName: String {
       switch self {
@@ -74,6 +75,8 @@ extension DHCBadge {
         return "Mid"
       case .hard:
         return "Hard"
+      case .love:
+        return "Love"
       }
     }
 
@@ -85,6 +88,8 @@ extension DHCBadge {
         return ColorResource.Text.Highlights.secondary.color
       case .hard:
         return ColorResource.levelHard.color
+      case .love:
+        return ColorResource.Text.Highlights.primary.color
       }
     }
   }

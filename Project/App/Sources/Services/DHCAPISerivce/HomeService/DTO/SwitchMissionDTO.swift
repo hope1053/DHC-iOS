@@ -26,7 +26,7 @@ extension SwitchMissionDTO {
     }
 
     let longTermMission = missions.first(where: { $0.type == .longTerm })!
-    let dailyMissions = missions.filter { $0.type == .daily }
+    let dailyMissions = missions.filter { $0.type != .longTerm }
 
     return SwitchMissionInfo(longTermMission: longTermMission, dailyMissionList: dailyMissions)
   }
