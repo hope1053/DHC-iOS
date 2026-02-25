@@ -19,8 +19,11 @@ struct MissionResultView: View {
 
       content
 
-      if case .todaySuccess = type {
+      switch type {
+      case .todaySuccess, .yesterDaySuccess:
         image
+      default:
+        EmptyView()
       }
 
       button
