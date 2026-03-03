@@ -77,15 +77,11 @@ extension YearlyFortuneDTO {
         badgeTitle: "\(year)년 운세 총평",
         scoreString: "\(totalScore)점",
         score: totalScore,
-        // TODO: summary 현재 API에 없어서 추가 필요
-        summary: """
-        올 한해는 전반적으로 마음이 들뜨는 날이에요, 
-        한템포 쉬어가요.
-        """
+        summary: summaryTitle
       ),
       cardInfo: cardInfo.toDomain,
       overallFortune: .init(
-        title: summaryTitle,
+        title: "운세",
         fortune: summaryDetail
       ),
       categoryFortuneItems: [
@@ -150,7 +146,7 @@ extension YearlyFortuneDTO {
         ]
       ),
       elementShift: .init(
-        title: yearlyEnergyTitle,
+        title: "기운 변화",
         description: yearlyEnergyDetail
       ),
       tipInfos: tips.map { $0.toDomain }
