@@ -13,6 +13,7 @@ struct AppResetAlertReducer {
   @Dependency(\.deviceIDManager) var deviceIDManager
   @Dependency(\.myPageClient) var myPageClient
   @Dependency(\.launchManager) var launchManager
+  @Dependency(\.testBannerStorage) var testBannerStorage
 
   init() {}
 
@@ -44,6 +45,7 @@ struct AppResetAlertReducer {
           userManager.deleteUserID()
           launchManager.deleteLastLaunchDate()
           try? deviceIDManager.deleteDeviceID()
+          testBannerStorage.clearDismissedVersions()
           await send(.delegate(.resetCompleted))
         }
       case .cancelButtonTapped:
