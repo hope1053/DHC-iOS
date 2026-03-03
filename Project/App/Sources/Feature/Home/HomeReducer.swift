@@ -60,6 +60,13 @@ struct HomeReducer {
     var bottomContentMargin: CGFloat {
       homeInfo.isTodayMissionDone ? 10 : 82
     }
+    
+    var todayMissionState: TodayMissionState {
+      let hasFinishedMission =
+        homeInfo.longTermMission.isFinished ||
+        homeInfo.dailyMissionList.contains(where: { $0.isFinished })
+      return hasFinishedMission ? .disable : .able
+    }
 
     init(
       homeInfo: HomeInfo,
@@ -332,11 +339,7 @@ struct HomeReducer {
       // todayMissionDone 직후 fetchHomeData가 호출된 경우, today 상태 유지
     } else {
       if homeInfo.isTodayMissionDone {
-        let hasFinishedMission =
-          homeInfo.longTermMission.isFinished ||
-          homeInfo.dailyMissionList.contains(where: { $0.isFinished })
-
-        if hasFinishedMission {
+        if state.todayMissionState == .disable {
           state.todayMissionResult = .todaySuccess(earnedPoint: 0)
         } else {
           state.todayMissionResult = .todayFail
