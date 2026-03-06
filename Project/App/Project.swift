@@ -26,6 +26,7 @@ let project = Project(
           "UILaunchScreen": [
             "UIImageName": "splashThumbnail"
           ],
+          "CFBundleIconName": "AppIcon",
           "NSAppTransportSecurity": [
             "NSAllowsArbitraryLoads": true,
           ],
