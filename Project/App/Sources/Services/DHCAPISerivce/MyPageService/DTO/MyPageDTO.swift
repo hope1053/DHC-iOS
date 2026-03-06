@@ -72,12 +72,6 @@ extension MyPageDTO {
     let imageURL: String?
     let displayName: String
     let testURL: String?
-    
-    enum CodingKeys: String, CodingKey {
-      case testURL
-      case displayName
-      case imageURL = "image"
-    }
   }
 }
 
