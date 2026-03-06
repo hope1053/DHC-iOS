@@ -56,15 +56,16 @@ struct TestParticipationView: View {
   
   private var contentSection: some View {
     VStack(spacing: 0) {
-      // TODO: image size 추후 수정 필요
       WebImage(
         url: store.test.imageURL,
         context: RemoteImageContext.context(for: store.test.imageURL),
         content: { image in
-          image.image?.resizable()
+          image.image?
+            .resizable()
+            .aspectRatio(contentMode: .fill)
         }
       )
-      .frame(width: 144, height: 200)
+      .clipped()
       .padding(.bottom, 16)
       
       Text(store.test.title)
