@@ -97,6 +97,7 @@ struct FortuneDetailView: View {
         )
         .background(ColorResource.Background.main.color)
     }
+    .loadingOverlay(isLoading: store.isLoading, needsDimming: false)
     .onAppear {
       store.send(.onAppear)
     }

@@ -27,17 +27,20 @@ struct FortuneDetailReducer {
     var rawTodayString: String // yyyy-MM-dd 형식
     var formattedTodayString: String // yyyy년 MM월 dd일 형식
     var detailInfo: FortuneDetail?
+    var isLoading: Bool
 
     init(
       type: FortuneDetailType,
       rawTodayString: String = "",
       formattedTodayString: String = "",
-      detailInfo: FortuneDetail? = nil
+      detailInfo: FortuneDetail? = nil,
+      isLoading: Bool = false
     ) {
       self.type = type
       self.rawTodayString = rawTodayString
       self.formattedTodayString = formattedTodayString
       self.detailInfo = detailInfo
+      self.isLoading = isLoading
     }
   }
 
@@ -60,10 +63,7 @@ struct FortuneDetailReducer {
     Reduce { state, action in
       switch action {
       case .onAppear:
-        return .concatenate(
-          .send(.updateTodayDate),
-          .send(.fetchFortuneDetail)
-        )
+        return handleOnAppear(state: &state)
         
       case .nextButtonTapped:
         return .none
@@ -72,6 +72,7 @@ struct FortuneDetailReducer {
         return .none
         
       case .fetchFortuneDetail:
+        state.isLoading = true
         switch state.type {
         case .detail:
           return .run { [state] send in
@@ -85,14 +86,17 @@ struct FortuneDetailReducer {
           }
         case .intro:
           state.detailInfo = .introInfo(date: state.formattedTodayString)
+          state.isLoading = false
           return .none
         }
         
       case .fortuneDetailResponse(let viewModel):
         state.detailInfo = viewModel
+        state.isLoading = false
         return .none
         
       case .fortuneDetailError:
+        state.isLoading = false
         return .none
         
       case .updateTodayDate:
@@ -107,6 +111,25 @@ struct FortuneDetailReducer {
 }
 
 extension FortuneDetailReducer {
+  private func handleOnAppear(state: inout State) -> Effect<Action> {
+    let rawTodayString = dateFormatterCache.formatter(for: "yyyy-MM-dd").string(from: Date())
+    let formattedTodayString = dateFormatterCache.formatter(for: "yyyy년 MM월 dd일").string(from: Date())
+
+    state.rawTodayString = rawTodayString
+    state.formattedTodayString = formattedTodayString
+
+    switch state.type {
+    case .intro:
+      if state.detailInfo == nil {
+        state.detailInfo = .introInfo(date: formattedTodayString)
+      }
+      return .none
+    case .detail:
+      state.detailInfo = nil
+      return .send(.fetchFortuneDetail)
+    }
+  }
+
   private func formatModel(from model: FortuneDetail) -> FortuneDetail {
     var newModel = model
     
