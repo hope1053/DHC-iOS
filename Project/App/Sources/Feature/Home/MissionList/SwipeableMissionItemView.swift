@@ -75,7 +75,7 @@ struct SwipeableMissionItemView: View {
         
         Text("미션 바꾸기")
           .textStyle(.body3)
-          .foregroundStyle(ColorResource.Text.main.color)
+          .foregroundStyle(ColorResource.Background.main.color)
       }
       .frame(maxHeight: .infinity)
       .padding(.trailing, 20)
